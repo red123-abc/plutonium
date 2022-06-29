@@ -51,19 +51,29 @@ exports.createIntern= async function(req,res){
 
            internData= await internModel.create(internDetails)
            return res.status(201).send({status:true,data:internData})
+         
     
 
 }
+
 
  catch (err) {
     console.log("This is the error:", err.message)
     res.status(500).send({ msg: "Error", error: err.message })
 
   }
+} 
+
+
+exports.getIntern=async function (req,res){
+college=req.query.name
+console.log(college)
+    data=await collegeModel.find({name:college})
+        
+        console.log(data)
+    interns=await internModel.findById({collegeId:data._id})
+    res.send({status:true,data:interns})
 }
-
-
-
 
 
 
