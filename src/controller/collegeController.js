@@ -32,6 +32,15 @@ const createCollege= async function(req,res){
             res.status(400).send({ status: false, msg: "LogoLink is required" });
             return
         }
+        if(/\d/.test(name)){
+            res.status(400).send({ status: false, msg: "Enter the Name in a correct format" });
+            return
+        
+        }
+        let allReadyExisted= await CollegeModel.findOne({$or:[{fullName:collegeDetails.fullName},{logoLink:collegeDetails.logoLink}]})
+            if(allReadyExisted){
+            return res.status(400).send({ status: false, msg: `${fullName} or ${logoLink} already exist` })
+        }
         let createdCollege=await CollegeModel.create(collegeDetails)
             return res.status(201).send({status:true,data:createdCollege, msg:"College Created Successfully"})
         
