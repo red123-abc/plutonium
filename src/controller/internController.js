@@ -61,13 +61,22 @@ exports.createIntern = async function (req, res) {
         internDetails.collegeId = getCollegeData._id  //storing object id of college in intern detail
 
         internData = await internModel.create(internDetails)  //creating document after clearing all the validation
-        return res.status(201).send({ status: true, data: internData })
+        let Intern = {    //storing all data in an object
+            "isDeleted": internData.isDeleted,
+            "name": internData.name,
+            "email": internData.email,
+            "mobile": internData.mobile,
+            "collegeId": `ObjectId(${internData.collegeId})`
+        }
+        return res.status(201).send({ status: true, data: Intern })
     }
-    catch (err) {
-        console.log("This is the error:", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+       
 
-    }
+    catch (err) {
+    console.log("This is the error:", err.message)
+    res.status(500).send({ msg: "Error", error: err.message })
+
+}
 }
 
 

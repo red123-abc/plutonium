@@ -1,8 +1,8 @@
 const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel.js");
-//var validate = require('url-validator');
-  
- let validUrl = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
+
+
+let validUrl = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
 
 let validString = /\d/; //To validate String using RegEx
 
@@ -17,23 +17,23 @@ const isValidReqestBody = function (requestBody) {  //function to check is there
 
 //===================================================[API:FOR CREATING COLLEGE DB]===========================================================
 
-exports.createCollege= async function(req,res){
-    try{
-        let collegeDetails=req.body   //getting data from request body
+exports.createCollege = async function (req, res) {
+    try {
+        let collegeDetails = req.body   //getting data from request body
 
         if (!isValidReqestBody(collegeDetails)) {  //validating is there any data inside request body
             res.status(400).send({ status: false, message: `${collegeDetails} No College Detail Received` })
             return
         }
 
-        const {name,fullName,logoLink}=collegeDetails  //Destructuring data coming from request body 
-        
+        const { name, fullName, logoLink } = collegeDetails  //Destructuring data coming from request body 
+
         //here performing validation for data
-        if (!isValid(name) || validString.test(name)) { 
+        if (!isValid(name) || validString.test(name)) {
             res.status(400).send({ status: false, msg: "Name is required and Enter Name in Correct Format" });
             return
         }
-        if (!isValid(fullName)  || validString.test(fullName)) {
+        if (!isValid(fullName) || validString.test(fullName)) {
             res.status(400).send({ status: false, msg: "FullName is required and Enter FullName in Correct Format" });
             return
         }
@@ -41,21 +41,27 @@ exports.createCollege= async function(req,res){
             res.status(400).send({ status: false, msg: "LogoLink is required" });
             return
         }
-        
-        if(!validUrl.test(logoLink)) return res.status(400).send({msg:"Invalid url"});
-        
+
+        if (!validUrl.test(logoLink)) return res.status(400).send({ msg: "Invalid url" });
+
         //checking is there same name present inside database or not
-        let allReadyExisted= await collegeModel.findOne({name:collegeDetails.name})
-            if(allReadyExisted){
+        let allReadyExisted = await collegeModel.findOne({ name: collegeDetails.name })
+        if (allReadyExisted) {
             return res.status(400).send({ status: false, msg: `${name} already exist` });
         }
         //after clearing all the validation document will be created
-        let createdCollege=await collegeModel.create(collegeDetails)
-            return res.status(201).send({status:true,data:createdCollege, msg:"College Created Successfully"})
-        
-    }catch(err){
+        let createdCollege = await collegeModel.create(collegeDetails)
+        let college = {    //storing all data in an object
+            "name": createdCollege.name,
+            "fullName": createdCollege.fullName,
+            "logoLink": createdCollege.logoLink,
+            "isDeleted": createdCollege.isDeleted
+        }
+        return res.status(201).send({ status: true, data: college, msg: "College Created Successfully" })
+
+    } catch (err) {
         console.log(err.message)
-        return res.status(500).send({error:err.message})
+        return res.status(500).send({ error: err.message })
     }
 
 };
@@ -67,7 +73,7 @@ exports.getIntern = async function (req, res) {
 
     try {
         let collegeName = req.query.collegeName; //storing data coming from query param 
-        
+
         if (!isValid(collegeName)) { //validating user has entered any collegeName or not
             res.status(400).send({ status: false, msg: "Enter a College Name in the query parameter" });
             return
@@ -75,21 +81,21 @@ exports.getIntern = async function (req, res) {
 
         let findCollege = await collegeModel.findOne({ name: collegeName }) //checking that college present inside database or not
         if (!findCollege) return res.status(404).send({ status: false, msg: "No College Found" });
-        
+
         //here getting name,email,mobile of intern based on collegeName
         let Intern = await internModel.find({ collegeId: findCollege }).select({ name: 1, email: 1, mobile: 1 });
-        if(Intern.length==0){
+        if (Intern.length == 0) {
             res.status(404).send({ status: false, msg: " No Intern Found" });
             return
         }
-        let collegeAndAllIntern={    //storing all data in an object
-            "name" : findCollege.name,
-            "fullName" : findCollege.fullName,
-            "logoLink" : findCollege.logoLink,
-            "interns" : Intern
+        let collegeAndAllIntern = {    //storing all data in an object
+            "name": findCollege.name,
+            "fullName": findCollege.fullName,
+            "logoLink": findCollege.logoLink,
+            "interns": Intern
         }
-        
-        res.status(200).send({data: collegeAndAllIntern }) //sending data in response
+
+        res.status(200).send({ data: collegeAndAllIntern }) //sending data in response
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
     }
