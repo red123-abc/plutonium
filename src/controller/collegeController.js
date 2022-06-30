@@ -1,63 +1,66 @@
-const collegeModel = require("../models/collegeModel");
+const collegeModel = require("../models/collegeModel.js");
 const internModel = require("../models/internModel.js");
 
 
 let validUrl = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
 
-let validString = /\d/; //To validate String using RegEx
-
+let validString = /^[ a-z ]+$/i; //To validate String using RegEx
+let validName = /\d/;
 const isValid = function (value) {   //function to check entered data is valid or not
     if (typeof value == "undefined" || value == null) return false;
     if (typeof value == "string" && value.trim().length === 0) return false;
     return true;
 }
-const isValidReqestBody = function (requestBody) {  //function to check is there any key is present in request body
-    return Object.keys(requestBody).length !== 0;
-}
+
 
 //===================================================[API:FOR CREATING COLLEGE DB]===========================================================
 
 exports.createCollege = async function (req, res) {
     try {
-        let collegeDetails = req.body   //getting data from request body
+        if (Object.keys(req.query).length == 0) {
+            let collegeDetails = req.body   //getting data from request body
 
-        if (!isValidReqestBody(collegeDetails)) {  //validating is there any data inside request body
-            res.status(400).send({ status: false, message: `${collegeDetails} No College Detail Received` })
-            return
-        }
+            if (Object.keys(collegeDetails).length == 0) {  //validating is there any data inside request body
+                res.status(400).send({ status: false, message: "No College Detail Received" })
+                return
+            }
 
-        const { name, fullName, logoLink } = collegeDetails  //Destructuring data coming from request body 
+            const { name, fullName, logoLink } = collegeDetails  //Destructuring data coming from request body 
 
-        //here performing validation for data
-        if (!isValid(name) || validString.test(name)) {
-            res.status(400).send({ status: false, msg: "Name is required and Enter Name in Correct Format" });
-            return
-        }
-        if (!isValid(fullName) || validString.test(fullName)) {
-            res.status(400).send({ status: false, msg: "FullName is required and Enter FullName in Correct Format" });
-            return
-        }
-        if (!isValid(logoLink)) {
-            res.status(400).send({ status: false, msg: "LogoLink is required" });
-            return
-        }
+            //here performing validation for data
+            if (!isValid(name) || !name.match(validString)) {
+                res.status(400).send({ status: false, msg: "Name is required and Enter Name in Correct Format" });
+                return
+            }
+            if (!isValid(fullName) || validName.test(fullName)) {
+                res.status(400).send({ status: false, msg: "FullName is required and Enter FullName in Correct Format" });
+                return
+            }
+            if (!isValid(logoLink)) {
+                res.status(400).send({ status: false, msg: "LogoLink is required" });
+                return
+            }
 
-        if (!validUrl.test(logoLink)) return res.status(400).send({ msg: "Invalid url" });
+            if (!validUrl.test(logoLink)) return res.status(400).send({ msg: "Invalid url" });
 
-        //checking is there same name present inside database or not
-        let allReadyExisted = await collegeModel.findOne({ name: collegeDetails.name })
-        if (allReadyExisted) {
-            return res.status(400).send({ status: false, msg: `${name} already exist` });
+            //checking is there same name present inside database or not
+            let allReadyExisted = await collegeModel.findOne({ name: collegeDetails.name })
+            if (allReadyExisted) {
+                return res.status(400).send({ status: false, msg: `${name} already exist` });
+            }
+            //after clearing all the validation document will be created
+            let createdCollege = await (await collegeModel.create(collegeDetails))
+           
+            let college = {    //storing all data in an object
+                "name": createdCollege.name,
+                "fullName": createdCollege.fullName,
+                "logoLink": createdCollege.logoLink,
+                "isDeleted": createdCollege.isDeleted
+            }
+            return res.status(201).send({ status: true, data: college })
+        } else {
+            return res.status(400).send({ status: false, message: "Invalid request you can't provide data in query param" });
         }
-        //after clearing all the validation document will be created
-        let createdCollege = await collegeModel.create(collegeDetails)
-        let college = {    //storing all data in an object
-            "name": createdCollege.name,
-            "fullName": createdCollege.fullName,
-            "logoLink": createdCollege.logoLink,
-            "isDeleted": createdCollege.isDeleted
-        }
-        return res.status(201).send({ status: true, data: college })
 
     } catch (err) {
         console.log(err.message)
@@ -72,6 +75,7 @@ exports.createCollege = async function (req, res) {
 exports.getIntern = async function (req, res) {
 
     try {
+
         let collegeName = req.query.collegeName; //storing data coming from query param 
 
         if (!isValid(collegeName)) { //validating user has entered any collegeName or not
