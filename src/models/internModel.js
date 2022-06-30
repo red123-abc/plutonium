@@ -3,10 +3,10 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 
 const internSchema = new mongoose.Schema({
-    name: {type: String,
+    name: {
+      type: String,
       required:true,
-      trim:true,
-      lowercase:true
+      trim:true
     },
     email: {
         type: String,

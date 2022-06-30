@@ -57,7 +57,7 @@ exports.createCollege = async function (req, res) {
             "logoLink": createdCollege.logoLink,
             "isDeleted": createdCollege.isDeleted
         }
-        return res.status(201).send({ status: true, data: college, msg: "College Created Successfully" })
+        return res.status(201).send({ status: true, data: college })
 
     } catch (err) {
         console.log(err.message)

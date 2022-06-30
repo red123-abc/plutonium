@@ -28,7 +28,7 @@ exports.createIntern = async function (req, res) {
 
         //here performing validation for data
         if (!isValid(name) || validString.test(name)) {
-            res.status(400).send({ status: false, msg: "Name is required" });
+            res.status(400).send({ status: false, msg: "Name is required and enter the correct format" });
             return
         }
         if (!isValid(email)) {
