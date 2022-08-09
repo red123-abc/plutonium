@@ -7,7 +7,7 @@ const lodash = require("lodash");
 const app = express();
 
 
-router.get("/test-me", function (req, res) {
+router.get('/test-me', function (req, res) {
   // lodash
   // Month division
   let month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -36,7 +36,7 @@ router.get("/test-me", function (req, res) {
 
 module.exports = router;
 
-router.get('/test-me', function (req, res) {
+router.get('/test-me2', function (req, res) {
     console.log('My batch is', abc.name)
     abc.printName()
     logger.welcome()
