@@ -131,4 +131,59 @@ router.post('/players', function(req, res){
 
 })
 
+//=============================================================================================================================================
+
+router.get("/test/:city/:id", function(req,res) {
+       console.log(req)
+       const id = req.params.id
+       const cityname = req.params.city
+       res.json(`${cityname} has ${id}`)
+   })
+
+//==================================================== Post API-2 Assignment ==================================================================
+
+// Q) You will be given an array of persons (i.e. an array of objects).. each person will have a {name: String, age: Number, votingStatus: true/false (Boolean)}
+//    take input in query param as votingAge.. and for all the people above that age, change votingStatus as true
+//    also return an array consisting of only the person that can vote     
+
+router.post("/post2/:votingAge", function (req, res) {
+    let persons = [
+        {
+            "name": "pk",
+            "age": 10,
+            "votingstatus": false
+        }, {
+            "name": "sk",
+            "age": 20,
+            "votingstatus": false
+        }, {
+            "name": "aa",
+            "age": 70,
+            "votingstatus": false
+        }, {
+            "name": "sc",
+            "age": 5,
+            "votingstatus": false
+        }, {
+            "name": "Ho",
+            "age": 40,
+            "votingstatus": false
+        }
+    ]
+
+
+    let votingAge = req.params.votingAge
+    let ab = []
+
+    for (let i = 0; i < persons.length; i++) {
+        if (persons[i].age > votingAge) {
+            persons[i].votingstatus = true
+            ab.push(persons[i])
+        }
+    }
+    console.log(ab)
+    res.send({ ab })
+   
+})
+
 module.exports = router;
