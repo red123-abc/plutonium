@@ -70,4 +70,65 @@ router.post("/test-post-4", function(req, res) {
     res.send(  { msg: arr , status: true }  )
 })
 
+//================================================= Assignment Post API ============================================================================
+
+// Q1) Write a POST /players api that creates a new player (i.e. that saves a player's details and doesn't allow saving the data of a player that already esxists in the data)
+
+let players = [
+    {
+        "name" : "manish",
+        "dob" : "1/1/1995",
+        "gender" : "male",
+        "city" : "jalandhar",
+        "sports" : [
+            "swimming"
+        ]
+    },
+    {
+        "name" : "gopal",
+        "dob" : "1/09/1995",
+        "gender" : "male",
+        "city" : "delhi",
+        "sports" : [
+            "soccer"
+        ]
+    },
+    {
+        "name" : "lokesh",
+        "dob" : "1/1/1999",
+        "gender" : "male",
+        "city" : "mumbai",
+        "sports" : [
+            "soccer"
+        ]
+    }
+]
+
+router.post('/players', function(req, res){
+
+    // LOGIC WILL COME HERE
+
+    let newPlayer = req.body
+    let newPlayersName = newPlayer.name
+    let isNameRepeated = false
+
+    for(let i=0; i<players.length; i++){
+        if(players[i].name == newPlayersName){
+           isNameRepeated = true;
+           break;
+        }
+    }
+    
+    if(isNameRepeated){
+        res.send("This player was added !")
+    }
+    else{
+        players.push(newPlayer)
+    }
+
+    console.log(players)
+    res.send(players)
+
+})
+
 module.exports = router;
