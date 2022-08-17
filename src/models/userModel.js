@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema( {
     emailId: String,
     gender: {
         type: String,
-        enum: ["male", "female", "LGBTQ"] //"falana" will give an error
+        enum: ["male", "female", "LGBTQ"]  //"falana" will give an error
     },
     age: Number,
     // isIndian: Boolean,
