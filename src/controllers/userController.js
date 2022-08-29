@@ -42,6 +42,44 @@ const getUsersData= async function (req, res) {
     res.send({msg: allUsers})
 }
 
+const feeds = async function(req, res, next) {
+    console.log("feeds")
+    next()
+    }
+
+const profileDetails = async function(req, res, next) {
+    console.log("profileDetils")
+    next()
+    }
+
+const friendList = async function(req, res, next) {
+        console.log("friendList")
+        next()
+        }
+
+const changePassword = async function(req, res, next) {
+    console.log("changePassword")
+    next()
+    }
+
+const termsAndConditions = async function(req, res, next) {
+    console.log("termsAndConditions")
+    next()
+    }
+
+const register = async function(req, res, next) {
+    console.log("register")
+    next()
+    }    
+
 module.exports.createUser= createUser
 module.exports.getUsersData= getUsersData
 module.exports.basicCode= basicCode
+
+module.exports.feeds = feeds
+module.exports.profileDetails = profileDetails
+module.exports.friendList = friendList
+module.exports.changePassword = changePassword
+module.exports.termsAndConditions = termsAndConditions
+module.exports.register = register
+

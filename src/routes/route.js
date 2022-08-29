@@ -21,28 +21,28 @@ router.post("/createUser", UserController.createUser)
 // router.get("/getUsersData", UserController.getUsersData)
 
 
-// const mid1= function ( req, res, next) {
-//     console.log("Hi I am a middleware named Mid1")
-//     // logic
-//     let loggedIn = false
+const mid1= function ( req, res, next) {
+    console.log("Hi I am a middleware named Mid1")
+    // logic
+    let loggedIn = false
 
-//     if (loggedIn== true) { 
-//         console.log( "OK LOGGED IS IS TRUE NOW")
-//         next ()
-//     }
-//     else {
-//         res.send ("Please login or register")
-//     }
-// }
+    if (loggedIn== true) { 
+        console.log( "OK LOGGED IS IS TRUE NOW")
+        next ()
+    }
+    else {
+        res.send ("Please login or register")
+    }
+}
 
-// // e.g. restricted and open-to-all API's can be handled like below now:
-// router.get('/homePage', mid1, UserController.feeds)
-// router.get('/profileDetails', mid1, UserController.profileDetails)
-// router.get('/friendList', mid1, UserController.friendList)
-// router.get('/changePassword', mid1, UserController.changePassword)
+// e.g. restricted and open-to-all API's can be handled like below now:
+router.get('/homePage', mid1, UserController.feeds)
+router.get('/profileDetails', mid1, UserController.profileDetails)
+router.get('/friendList', mid1, UserController.friendList)
+router.get('/changePassword', mid1, UserController.changePassword)
 
-// router.get('/termsAndConditions',  UserController.termsAndConditions)
-// router.get('/register',  UserController.register)
+router.get('/termsAndConditions',  UserController.termsAndConditions)
+router.get('/register',  UserController.register)
 
 
 
