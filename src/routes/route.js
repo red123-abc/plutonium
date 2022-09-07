@@ -8,13 +8,13 @@ const blogController = require("../controllers/blogController")
 
 router.post("/authors", authorController.createAuthor)
 
-router.post("/blogs",middlewear.mid1, blogController.createBlog)
+router.post("/blogs",middlewear.authentication, blogController.createBlog)
 
-router.get("/blogs",middlewear.mid1, blogController.getBlog)
+router.get("/blogs",middlewear.authentication, blogController.getBlog)
 
-router.put("/blogs/:blogId",middlewear.mid1,middlewear.mid2, blogController.updatedBlog)
+router.put("/blogs/:blogId",middlewear.authentication,middlewear.authorisation, blogController.updatedBlog)
 
-router.delete("/blogs/:blogId",middlewear.mid1,middlewear.mid2,blogController.deletedBlog)
+router.delete("/blogs/:blogId",middlewear.authentication,middlewear.authorisation,blogController.deletedBlog)
 
 router.delete("/blogs",blogController.deleteBlogByQuery)
 
