@@ -126,71 +126,99 @@ const deletedBlog = async function (req, res) {
 }
 
 // // ............................................................delete by query .................................................................
-
-const deletebyquery = async function (req, res) {
+const deleteBlogByQuery = async function (req, res) {
   try {
+      let query = req.query
+      if (Object.keys(query).length == 0) {
+          return res.status(400).send({ status: false, msg: "Query Params cannot be empty" })
+      }
 
-    if (Object.keys(req.query).length == 0) {
-        return res.status(400).send({ status: false, msg: "atleast one query must be there" })
-    }
-    let authorId = req.query.authorId
-    console.log(authorId)
-    let category = req.query.category
-    let tags = req.query.tags
-    let subcategory = req.query.subcategory
-    let isPublished = req.query.isPublished
-    if (!authorId) return res.status(400).send({ status: false, msg: "authorId must be present" })
-    const tokenId = req.decodedToken.authorId
-    console.log(req.decodedToken)
-    if (authorId !== tokenId) {
-      return res.status(403).send({status:false,
-        msg: 'FORBIDDEN',
-        error: 'User logged is not allowed to modify the requested users data',
-    });
+      let deleteBlogs = await blogModel.updateMany({authorId: query.authorId, isDeleted: false}, { $set: { isDeleted: true, deletedAt: Date.now() } })
+      if (deleteBlogs.matchedCount == 0) {
+          return res.status(404).send({ status: false, msg: "Blog Not Found" })
+      }
       
-    }
- 
-    let blog = {
+      res.status(200).send({ status: true, msg: "Document is deleted" })
+  } catch (error) {
+      console.log(error);
+      res.status(500).send({ status: false, msg: error.message })
+  }
+}
 
-    }
-    if (authorId) {
-      blog.authorId = authorId
-    }
-    if (category) {
-      blog.category=category
-    }
-    if (tags) {
-      blog.tags = tags
-    }
-    if (subcategory) {
-      blog.subcategory = subcategory
-    } if (isPublished) {
-      blog.isPublished = isPublished
-    }
+
+
+
+
+
+
+
+
+
+
+// const deletebyquery = async function (req, res) {
+//   try {
+
+//     if (Object.keys(req.query).length == 0) {
+//         return res.status(400).send({ status: false, msg: "atleast one query must be there" })
+//     }
+//     let authorId = req.query.authorId
+//     console.log(authorId)
+//     let category = req.query.category
+//     let tags = req.query.tags
+//     let subcategory = req.query.subcategory
+//     let isPublished = req.query.isPublished
+//     if (!authorId) return res.status(400).send({ status: false, msg: "authorId must be present" })
+//     const tokenId = req.decodedToken.authorId
+//     console.log(req.decodedToken)
+//     if (authorId !== tokenId) {
+//       return res.status(403).send({status:false,
+//         msg: 'FORBIDDEN',
+//         error: 'User logged is not allowed to modify the requested users data',
+//     });
+      
+//     }
+ 
+//     let blog = {
+
+//     }
+//     if (authorId) {
+//       blog.authorId = authorId
+//     }
+//     if (category) {
+//       blog.category=category
+//     }
+//     if (tags) {
+//       blog.tags = tags
+//     }
+//     if (subcategory) {
+//       blog.subcategory = subcategory
+//     } if (isPublished) {
+//       blog.isPublished = isPublished
+//     }
 
     
 
-    let data = await blogModel.updateMany(blog, {
-      $set: {
-        isDeleted: true, deletedAt: new Date()
-      }
-    });
-    if (!data) return res.status(400).send({ msg: "updated data not found" })
+//     let data = await blogModel.updateMany(blog, {
+//       $set: {
+//         isDeleted: true, deletedAt: new Date()
+//       }
+//     });
+//     if (!data) return res.status(400).send({ msg: "updated data not found" })
 
 
-    res.status(200).send({ status: true ,data:data})
-  }
-  catch (err) {
-    console.log("This is the error:", err.message)
-    res.status(500).send({ msg: "Error", error: err.message })
-  }
-}
+//     res.status(200).send({ status: true ,data:data})
+//   }
+//   catch (err) {
+//     console.log("This is the error:", err.message)
+//     res.status(500).send({ msg: "Error", error: err.message })
+//   }
+// }
 
 
 module.exports.createBlog = createBlog;
 module.exports.getBlog = getBlog;
 module.exports.updatedBlog = updatedBlog
 module.exports.deletedBlog = deletedBlog
-module.exports.deletebyquery = deletebyquery
+module.exports.deleteBlogByQuery = deleteBlogByQuery
 
 // User

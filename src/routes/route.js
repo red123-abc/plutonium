@@ -15,6 +15,6 @@ router.put("/blogs/:blogId", blogController.updatedBlog)
 
 router.delete("/blogs/:blogId",blogController.deletedBlog)
 
-router.delete("/blogs",blogController.deletebyquery)
+router.delete("/blogs",blogController.deleteBlogByQuery)
 
 module.exports = router;
