@@ -36,7 +36,7 @@ const getBlog = async function (req, res) {
 
     let blog = {
       isDeleted: false,
-      isPublished: false
+      isPublished: true
     }
 
     if (authorId) {
@@ -78,6 +78,8 @@ const updatedBlog = async function (req, res) {
     if (Object.keys(blog).length == 0) {
       return res.status(404).send({status: false, msg:"No such blog found"});
     }
+    if(!blog.isDeleted==false)
+    return res.status(404).send({status:false,msg:"document not found"})
     if (data.title) blog.title = data.title;
     if (data.category) blog.category = data.category;
     if (data.body) blog.body = data.body;
@@ -103,12 +105,10 @@ const updatedBlog = async function (req, res) {
 const deletedBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
-
-
     let blog = await blogModel.findById(blogId);
-
-
     if (!blog) return res.status(404).send({ msg: "not found" })
+    if(!blog.isDeleted==false)
+    return res.status(404).send({msg:"document has been deleted"})
 
     // blogData = req.body
     let deletedBlog = await blogModel.findOneAndUpdate({ _id: blogId }, {
@@ -118,8 +118,6 @@ const deletedBlog = async function (req, res) {
     }, { new: true });
     res.status(200).send({ status: true, data: deletedBlog });
 
-
-
   } catch (err) {
     console.log("This is the error:", err.message)
     res.status(500).send({ msg: "Error", error: err.message })
@@ -127,7 +125,7 @@ const deletedBlog = async function (req, res) {
 
 }
 
-// ............................................................delete by query .................................................................
+// // ............................................................delete by query .................................................................
 
 const deletebyquery = async function (req, res) {
   try {
@@ -148,7 +146,7 @@ const deletebyquery = async function (req, res) {
       return res.status(403).send({status:false,
         msg: 'FORBIDDEN',
         error: 'User logged is not allowed to modify the requested users data',
-      });
+    });
       
     }
  
