@@ -9,11 +9,12 @@ const authentication = function (req, res, next) {
       }else{
         const validToken = jwt.decode(token)
         if(validToken){
-            jwt.verify(token,"project-1")
-            next()
+            jwt.verify(token,"project-1")   
         }
+        req.decodedToken = validToken;
       }
-    
+      
+    next()
     }
   catch (err) {
       console.log("This is the error:", err.message)
