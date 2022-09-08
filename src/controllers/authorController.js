@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const authorModel = require("../models/authorModel")
 
 
-//.....................................................................create Author...............................................
+//.....................................................................create Author................................................
 
 const createAuthor = async function (req, res) {
 
@@ -16,7 +16,7 @@ const createAuthor = async function (req, res) {
     if (!data.email) return res.status(400).send({ msg: "email is required" })
     if (!data.password) return res.status(400).send({ msg: "password is required" })
     let authorCreated = await authorModel.create(data)
-    res.send({ data: authorCreated })
+    res.status(201).send({ data: authorCreated ,msg:"document is created"})
   
   } catch (err) {
     console.log("This is the error:", err.message)
