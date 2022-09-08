@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const authorModel = require("../models/authorModel")
-
+const VALIDATOR = require("../validator/validate")
 
 //.....................................................................create Author................................................
 
@@ -15,9 +15,19 @@ const createAuthor = async function (req, res) {
     if (!data.title) return res.status(400).send({ msg: "title is required" })
     if (!data.email) return res.status(400).send({ msg: "email is required" })
     if (!data.password) return res.status(400).send({ msg: "password is required" })
+
+    let email = req.body.email
+    if (!VALIDATOR.isValidEmail(email))
+      return res.status(400).send({ msg: `this mail is not valid ::${email}`})
+
+    let password = req.body.password
+    if (!VALIDATOR.isValidPassword(password))
+      return res.status(400).send({ msg: `Password should be 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter` })
+
+
     let authorCreated = await authorModel.create(data)
-    res.status(201).send({ data: authorCreated ,msg:"document is created"})
-  
+    res.status(201).send({ data: authorCreated, msg: "document is created" })
+
   } catch (err) {
     console.log("This is the error:", err.message)
     res.status(500).send({ msg: "Error", error: err.message })

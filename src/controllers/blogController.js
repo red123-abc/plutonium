@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const blogModel = require("../models/blogModel")
+const VALIDATOR = require("../validator/validate")
 
-const isValidObjectId = function (objectId) {
-  return mongoose.Types.ObjectId.isValid(objectId)
-}
+
 // ....................................create  Blog................................................................
 
 const createBlog = async function (req, res) {
@@ -13,7 +12,7 @@ const createBlog = async function (req, res) {
     if (!blog.title) return res.status(400).send({ msg: "title is required" })
     if (!blog.body) return res.status(400).send({ msg: "body is required" })
     if (!blog.category) return res.status(400).send({ msg: "category is required" })
-    if (!isValidObjectId(author_id)) return res.status(404).send({ msg: " author id is not valid" })
+    if (!VALIDATOR.isValidObjectId(author_id)) return res.status(404).send({ msg: " author id is not valid" })
 
     let blogCreated = await blogModel.create(blog)
     return res.status(201).send({ data: blogCreated ,msg:"Blog document created"})
@@ -73,7 +72,6 @@ const updatedBlog = async function (req, res) {
     let data = req.body;
     if (Object.keys(data).length == 0) return res.status(404).send({status: false, msg: "Please include atleast one properties to be updated"});
     let blog = await blogModel.findById(blogId);
-    console.log(blog)
     if (Object.keys(blog).length == 0) {
       return res.status(404).send({status: false, msg:"No such blog found"});
     }
@@ -109,7 +107,6 @@ const deletedBlog = async function (req, res) {
     if(!blog.isDeleted==false)
     return res.status(404).send({msg:"document has been deleted"})
 
-    // blogData = req.body
     let deletedBlog = await blogModel.findOneAndUpdate({ _id: blogId }, {
       $set: {
         isDeleted: true, deletedAt: Date()
@@ -191,4 +188,3 @@ module.exports.updatedBlog = updatedBlog
 module.exports.deletedBlog = deletedBlog
 module.exports.deletebyquery = deletebyquery
 
-// User
