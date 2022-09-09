@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+
 const blogModel = require("../models/blogModel")
 const VALIDATOR = require("../validator/validate")
 
@@ -12,7 +12,10 @@ const createBlog = async function (req, res) {
     if (!blog.title) return res.status(400).send({ msg: "title is required" })
     if (!blog.body) return res.status(400).send({ msg: "body is required" })
     if (!blog.category) return res.status(400).send({ msg: "category is required" })
+
     if (!VALIDATOR.isValidObjectId(author_id)) return res.status(404).send({ msg: " author id is not valid" })
+
+    if(!VALIDATOR.validBlogTitle(blog.title)) return res.status(400).send({msg:"title is not valid"})
 
     let blogCreated = await blogModel.create(blog)
     return res.status(201).send({ data: blogCreated ,msg:"Blog document created"})
@@ -109,7 +112,7 @@ const deletedBlog = async function (req, res) {
 
     let deletedBlog = await blogModel.findOneAndUpdate({ _id: blogId }, {
       $set: {
-        isDeleted: true, deletedAt: Date()
+        isDeleted: true, deletedAt:new Date()
       }
     }, { new: true });
     res.status(200).send({ status: true, data: deletedBlog });

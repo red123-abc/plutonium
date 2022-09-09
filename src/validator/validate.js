@@ -14,16 +14,27 @@ const isValidPassword =function(value){
     else return false
 }
 
-// Title and body validation
-const isValid = function (value) {
-     if(typeof(value)==="undefined"||typeof(value)==null) return false;
+//validation for fname and lname
 
-     if(typeof(value)==="string"&&value.trim().length==0) return false;
+const validChar = function(value){
+    if(/^[a-zA-Z]*$/.test(value)) {
+        return true
+    }else{
+        return false
+    }
+}
 
-    return true; 
-   }
+// validation for blog title
+const validBlogTitle = function(value){
+    if(/^[a-z\d\-_\s]+$/i.test(value)){
+        return true
+    }else{
+        return false
+    }
+}
 
    module.exports.isValidObjectId=isValidObjectId
    module.exports.isValidEmail=isValidEmail
    module.exports.isValidPassword=isValidPassword
-   module.exports.isValid=isValid
+   module.exports.validChar=validChar
+   module.exports.validBlogTitle=validBlogTitle

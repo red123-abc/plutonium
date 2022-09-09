@@ -16,9 +16,18 @@ const createAuthor = async function (req, res) {
     if (!data.email) return res.status(400).send({ msg: "email is required" })
     if (!data.password) return res.status(400).send({ msg: "password is required" })
 
+    let fname = req.body.fname
+    if (!VALIDATOR.validChar(fname))
+      return res.status(400).send({ msg: "fname should be alphabet" })
+
+    let lname = req.body.lname
+    if (!VALIDATOR.validChar(lname))
+      return res.status(400).send({ msg: "lname should be alphabet" })
+
+
     let email = req.body.email
     if (!VALIDATOR.isValidEmail(email))
-      return res.status(400).send({ msg: `this mail is not valid ::${email}`})
+      return res.status(400).send({ msg: `this mail is not valid ::${email}` })
 
     let password = req.body.password
     if (!VALIDATOR.isValidPassword(password))
