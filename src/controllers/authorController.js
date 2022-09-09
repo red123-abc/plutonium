@@ -70,7 +70,6 @@ const loginUser = async function (req, res) {
       },
       "project-1"
     );
-    res.setHeader("x-api-key", token);
     res.status(200).send({ status: true, token: token });
     console.log(token)
   } catch (err) {
