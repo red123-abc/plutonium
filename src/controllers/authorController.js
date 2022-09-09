@@ -24,6 +24,9 @@ const createAuthor = async function (req, res) {
     if (!VALIDATOR.validChar(lname))
       return res.status(400).send({ msg: "lname should be alphabet" })
 
+    let title = data.title
+    if (!VALIDATOR.validAuthorTitle(title))
+      return res.status(400).send({ msg: "Title should be Mr,Mrs and Miss" })
 
     let email = req.body.email
     if (!VALIDATOR.isValidEmail(email))

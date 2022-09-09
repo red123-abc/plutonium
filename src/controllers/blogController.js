@@ -13,7 +13,7 @@ const createBlog = async function (req, res) {
     if (!blog.body) return res.status(400).send({ msg: "body is required" })
     if (!blog.category) return res.status(400).send({ msg: "category is required" })
 
-    if (!VALIDATOR.isValidObjectId(author_id)) return res.status(404).send({ msg: " author id is not valid" })
+    if (!VALIDATOR.isValidObjectId(author_id)) return res.status(400).send({ msg: " author id is not valid" })
 
     if(!VALIDATOR.validBlogTitle(blog.title)) return res.status(400).send({msg:"title is not valid"})
 
@@ -34,6 +34,8 @@ const getBlog = async function (req, res) {
     let category = req.query.category
     let tags = req.query.tags
     let subcategory = req.query.subcategory
+
+    if(!VALIDATOR.isValidObjectId(authorId)) return res.status(400).send({msg:"author_id is not valid"})
 
     let blog = {
       isDeleted: false,
@@ -73,6 +75,7 @@ const updatedBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
     let data = req.body;
+
     if (Object.keys(data).length == 0) return res.status(404).send({status: false, msg: "Please include atleast one properties to be updated"});
     let blog = await blogModel.findById(blogId);
     if (Object.keys(blog).length == 0) {
@@ -105,6 +108,7 @@ const updatedBlog = async function (req, res) {
 const deletedBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
+
     let blog = await blogModel.findById(blogId);
     if (!blog) return res.status(404).send({ msg: "not found" })
     if(!blog.isDeleted==false)
@@ -134,13 +138,14 @@ const deletebyquery = async function (req, res) {
         return res.status(400).send({ status: false, msg: "atleast one query must be there" })
     }
     let authorId = req.query.authorId
-    console.log(authorId)
     let category = req.query.category
     let tags = req.query.tags
     let subcategory = req.query.subcategory
     let isPublished = req.query.isPublished
+
     if (!authorId) return res.status(400).send({ status: false, msg: "authorId must be present" })
-    
+    if(!VALIDATOR.isValidObjectId(authorId)) return res.status(400).send({msg:"author_id is not valid"})
+
     const tokenId = req.decodedToken.authorId
     console.log(req.decodedToken)
     if (authorId !== tokenId) {

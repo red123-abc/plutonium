@@ -9,32 +9,48 @@ const isValidEmail = function (value) {
     else return false
 }
 
-const isValidPassword =function(value){
-    if(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(value)){return true}
-    else return false
+const isValidPassword = function (value) {
+    if (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(value)) {
+        return true
+    } else {
+        return false
+    }
+
 }
 
 //validation for fname and lname
 
-const validChar = function(value){
-    if(/^[a-zA-Z]*$/.test(value)) {
+const validChar = function (value) {
+    if (/^[a-zA-Z]*$/.test(value)) {
         return true
-    }else{
+    } else {
         return false
     }
 }
 
 // validation for blog title
-const validBlogTitle = function(value){
-    if(/^[a-z\d\-_\s]+$/i.test(value)){
+const validBlogTitle = function (value) {
+    if (/^[a-z\d\-_\s]+$/i.test(value)) {
         return true
-    }else{
+    } else {
         return false
     }
 }
 
-   module.exports.isValidObjectId=isValidObjectId
-   module.exports.isValidEmail=isValidEmail
-   module.exports.isValidPassword=isValidPassword
-   module.exports.validChar=validChar
-   module.exports.validBlogTitle=validBlogTitle
+// validation for author title
+const validAuthorTitle = function (value) {
+    if (["Mr", "Mrs", "Miss"].includes(value)) {
+        return true
+    } else {
+        return false
+    }
+}
+
+// module.exports.isValidObjectId = isValidObjectId
+// module.exports.isValidEmail = isValidEmail
+// module.exports.isValidPassword = isValidPassword
+// module.exports.validChar = validChar
+// module.exports.validBlogTitle = validBlogTitle
+// module.exports.validAuthorTitle = validAuthorTitle
+
+module.exports={isValidObjectId,isValidEmail,isValidPassword,validChar,validBlogTitle,validAuthorTitle}
