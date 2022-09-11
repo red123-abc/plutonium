@@ -8,7 +8,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
-  "author": "",
+  "author": "grp 57",
+  "contributor": "Debasish Behera, Rizwan Ansari, Indrazeet Suryavansi, Prabhas Prasad",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
