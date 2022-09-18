@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ranjeetsingh23/project2_group-54.git"
+    "url": "git+https://github.com/red123-abc/plutonium.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ranjeetsingh23/project2_group-54/issues"
+    "url": "https://github.com/red123-abc/plutonium.git"
   },
-  "homepage": "https://github.com/ranjeetsingh23/project2_group-54#readme",
+  "homepage": "https://github.com/red123-abc/plutonium.git",
   "dependencies": {
     "email-validator": "^2.0.4",
     "express": "^4.18.1",

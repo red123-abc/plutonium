@@ -88,10 +88,10 @@ exports.getIntern = async function (req, res) {
 
         //here getting name,email,mobile of intern based on collegeName
         let Intern = await internModel.find({ collegeId: findCollege }).select({ name: 1, email: 1, mobile: 1 });
-        if (Intern.length == 0) {
-            res.status(404).send({ status: false, msg: " No Intern Found" });
-            return
-        }
+        // if (Intern.length == 0) {
+        //     res.status(404).send({ status: false, msg: " No Intern Found" });
+        //     return
+        // }
         let collegeAndAllIntern = {    //storing all data in an object
             "name": findCollege.name,
             "fullName": findCollege.fullName,
