@@ -6,7 +6,12 @@ const userController = require("../controller/userController")
 
 
 //=========We have created USER API==================
+
 router.post('/register', userController.userCreate);
 router.get('/login', userController.loginUser)
+
+router.all('/*', function(){
+          return res.status(400).send({status: false , massage: "Invilid request"})
+})
 
 module.exports = router
