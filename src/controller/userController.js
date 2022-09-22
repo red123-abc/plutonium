@@ -1,5 +1,5 @@
 const userModel = require('../Models/userModel');
-const validator = require('../validation/validation.js');
+const validations = require('../validation/validation.js');
 
 // =================================== CREATE USER ==================================
 
@@ -14,13 +14,13 @@ const userCreate = async function (req, res) {
         if (!title) {
             return res.status(400).send({ status: false, massage: "Title is required" });
         };
-        if (!["Mr", "Mrs", "Miss"].includes(title) && !validator.isValid(title)) {
+        if (!["Mr", "Mrs", "Miss"].includes(title) && !validations.isValid(title)) {
             return res.status(400).send({ status: false, massage: "Title is in wrong format" });
         };
         if (!name) {
             return res.status(400).send({ status: false, massage: "Name is required" });
         };
-        if (!validator.isValid(name)) {
+        if (!validations.isValid(name)) {
             return res.status(400).send({ status: false, massage: "Name is Empty" });
         };
         if (!/^[ a-z ]+$/i.test(name)) {
@@ -40,7 +40,7 @@ const userCreate = async function (req, res) {
         if (!email) {
             return res.status(400).send({ status: false, massage: "Email is required" });
         };
-        if (!validator.isValid(email)) {
+        if (!validations.isValid(email)) {
             return res.status(400).send({ status: false, massage: "Email is Empty" });
         };
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email.trim())) {
@@ -66,13 +66,13 @@ const userCreate = async function (req, res) {
         if (!address.street) {
             return res.status(400).send({ status: false, message: "Street is required" });
         };
-        if (!validator.isValid(address.street)) {
+        if (!validations.isValid(address.street)) {
             return res.status(400).send({ status: false, message: "Street is Empty" });
         };
         if (!address.city) {
             return res.status(400).send({ status: false, message: "City is required" });
         };
-        if (!validator.isValid(address.city)) {
+        if (!validations.isValid(address.city)) {
             return res.status(400).send({ status: false, message: "City is  Empty" });
         };
         if (!address.pincode) {

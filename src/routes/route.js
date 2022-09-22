@@ -10,6 +10,15 @@ const userController = require("../controller/userController")
 router.post('/register', userController.userCreate);
 router.get('/login', userController.loginUser)
 
+//========================= createBook =============
+router.post('/createsBook',bookController.createBook)
+
+
+
+
+
+
+
 router.all('/*', function(){
           return res.status(400).send({status: false , massage: "Invalid request"})
 })
