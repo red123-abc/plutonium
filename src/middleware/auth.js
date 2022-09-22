@@ -37,6 +37,7 @@ const authorizations = async function (req, res, next) {
               const token = req.headers["x-api-key"];
               const decodedToken = jwt.verify(token, "project-booksManagementGroup59");
               if (blog.userId == decodedToken.userId) {
+                     
                      next();
               } else {
                      return res.status(403).send({ status: false, message: "Authorisation failded" });

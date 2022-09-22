@@ -5,10 +5,11 @@ const reviewController = require("../controller/reviewController")
 const userController = require("../controller/userController")
 
 
+
 //=========We have created USER API==================
 
 router.post('/register', userController.userCreate);
-router.get('/login', userController.loginUser)
+router.post('/login', userController.loginUser)
 
 //========================= createBook =============
 router.post('/createsBook',bookController.createBook)
