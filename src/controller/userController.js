@@ -1,5 +1,5 @@
 const userModel = require('../Models/userModel');
-const Validations = require('../validation/validation.js');
+const validations = require('../validation/validation.js');
 
 // =========== CREATE USER =====================
 

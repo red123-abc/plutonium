@@ -8,5 +8,7 @@ const userController = require("../controller/userController")
 //=========We have created USER API==================
 router.post('/register', userController.userCreate);
 router.get('/login', userController.loginUser)
+// createBook
+router.post('/createsBook',bookController.createBook)
 
 module.exports = router

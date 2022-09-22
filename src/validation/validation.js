@@ -1,22 +1,4 @@
 
-//=========== VALIDATION CREATE USER =====================;
-
-
-// validation for User title
-// const isValidUserTitle = function (value) {
-//           if (/^[a-z\d\-_\s]+$/i.test(value)) {
-//                     return true;
-//           } else {
-//                     return false;
-//           }
-//           if (["Mr", "Mrs", "Miss"].includes(value)) {
-//                     return true;
-//           } else {
-//                     return false;
-//           }
-
-// };
-
 // validation for  User  title of enum
 const isValidUserTitle = function (value) {
           if (["Mr", "Mrs", "Miss"].includes(value)) {
@@ -25,8 +7,7 @@ const isValidUserTitle = function (value) {
                     return false;
           }
 }
-
-         
+       
 //validation for Name
 const isValidUserName = function (value) {
           if (/^ [a - zA - Z] + [a - zA - Z] + $ /.test(value)) {
@@ -36,8 +17,6 @@ const isValidUserName = function (value) {
           }
 };
 
-
-
 // Validation for phone
 const isValidUserPhone = function (value) {
           if (/^[987]{1})(\d{1}\d{8})/.test(value)) {
@@ -46,8 +25,6 @@ const isValidUserPhone = function (value) {
                     return false;
           }
 };
-
-
 // Validation for Email
 const isValidUserEmail = function (value) {
           if (/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(value)) {
@@ -57,7 +34,6 @@ const isValidUserEmail = function (value) {
           }
 
 };
-
 // Validation for Password
 const isValidPassword = function (value) {
           if (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(value)) {
@@ -67,8 +43,16 @@ const isValidPassword = function (value) {
           }
 
 };
+// bookController reviews validation
+const isValidReleasedAt = function(value){
+    if(! /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(value)){
+        return true;
+    }
+    else{
+        return false
+    }
 
-
+}
 
 // Destructuring 
-module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword };
+module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword,isValidReleasedAt };
