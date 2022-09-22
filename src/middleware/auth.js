@@ -27,13 +27,16 @@ try {
 const authorizations = async function (req, res, next) {
        try {
               const blogId = req.params.blogId;
-              if (!mongoose.Types.ObjectId.isValid(blogId)) return res.status(400).send({ msg: "blog_id is not valid" });
+
+              if (!mongoose.Types.ObjectId.isValid(blogId)){
+                  return res.status(400).send({ msg: "blog_id is not valid" });
+              }
               const blog = await blogModel.findById(blogId);
-              console.log(blog);
+                console.log(blog);
 
               const token = req.headers["x-api-key"];
               const decodedToken = jwt.verify(token, "project-booksManagementGroup59");
-              if (blog.authorId == decodedToken.authorId) {
+              if (blog.userId == decodedToken.userId) {
                      next();
               } else {
                      return res.status(403).send({ status: false, message: "Authorisation failded" });

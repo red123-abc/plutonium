@@ -8,7 +8,7 @@ const userCreate = async function (req, res) {
 
         let { title, name, phone, email, password, address, } = req.body;
 
-        if (Object.keys(req.body).length == 0){
+        if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Body is empty, please Provide data" });
         };
         if (!title) {
@@ -39,8 +39,8 @@ const userCreate = async function (req, res) {
         };
         if (!email) {
             return res.status(400).send({ status: false, massage: "Email is required" });
-        };  
-        if (!validator.isValid(email)){
+        };
+        if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, massage: "Email is Empty" });
         };
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email.trim())) {
@@ -63,19 +63,19 @@ const userCreate = async function (req, res) {
         if (address && typeof address != "object") {
             return res.status(400).send({ status: false, message: "Address is in wrong format" });
         };
-        if (!address.street ){
+        if (!address.street) {
             return res.status(400).send({ status: false, message: "Street is required" });
         };
-        if ( !validator.isValid(address.street)) {
+        if (!validator.isValid(address.street)) {
             return res.status(400).send({ status: false, message: "Street is Empty" });
         };
-        if (!address.city ) {
+        if (!address.city) {
             return res.status(400).send({ status: false, message: "City is required" });
         };
         if (!validator.isValid(address.city)) {
             return res.status(400).send({ status: false, message: "City is  Empty" });
         };
-        if (!address.pincode ) {
+        if (!address.pincode) {
             return res.status(400).send({ status: false, message: "Pincode is required" });
         };
         if (!/^[1-9][0-9]{5}$/.test(address.pincode.trim())) {
@@ -102,19 +102,24 @@ const loginUser = async function (req, res) {
         if (!userEmail && !password)
             return res.status(400).send({ status: false, massage: "please enter username and password" });
 
-        let saveData = await userModel.findOne({ email: pserEmail, password: password });
-        if (!saveData)
-            return res.status(400).send({ status: false, massage: "UserName and Password is not Correct" });
+        let userData = await userModel.findOne({ email: userEmail, password: password });
+        if (!userData)
+            return res.status(400).send({ status: false, massage: "UserEmail and Password is not Correct" });
 
         let token = jwt.sign({
-            UserId: UserName._id.toString(),
+            userId: userData._id.toString(),
             batch: "plutonium",
-            organisation: "FunctionUp",
+            organization: "FunctionUp",
 
         },
-            "project-booksManagementGroup59"
+            "project-booksManagementGroup59", {
+
+            expiresIn: "24h" // expires in "24h"
+        }
         );
-        return res.status(200).send({ status: true, token: token });
+
+        return res.status(200).send({ status: true, message: "User logged in successfully" , data: token });
+
     } catch (error) {
         return res.status(500).send({ status: false, massage: error.massage });
     }
