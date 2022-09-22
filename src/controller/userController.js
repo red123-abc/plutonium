@@ -1,5 +1,6 @@
 const userModel = require('../Models/userModel');
 const validations = require('../validation/validation.js');
+const jwt = require('jsonwebtoken')
 
 // =================================== CREATE USER ==================================
 
@@ -118,7 +119,7 @@ const loginUser = async function (req, res) {
         }
         );
 
-        return res.status(200).send({ status: true, message: "User logged in successfully" , data: token });
+        return res.status(200).send({ status: true, message: "User logged in successfully" , data:token });
 
     } catch (error) {
         return res.status(500).send({ status: false, massage: error.massage });

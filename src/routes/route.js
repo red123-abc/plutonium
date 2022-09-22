@@ -8,7 +8,7 @@ const userController = require("../controller/userController")
 //=========We have created USER API==================
 
 router.post('/register', userController.userCreate);
-router.get('/login', userController.loginUser)
+router.post('/login', userController.loginUser)
 
 //========================= createBook =============
 router.post('/createsBook',bookController.createBook)
@@ -19,8 +19,8 @@ router.post('/createsBook',bookController.createBook)
 
 
 
-router.all('/*', function(){
-          return res.status(400).send({status: false , massage: "Invalid request"})
-})
+// router.all('/*', function(){
+//           return res.status(400).send({status: false , massage: "Invalid request"})
+// })
 
 module.exports = router

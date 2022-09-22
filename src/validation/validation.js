@@ -1,5 +1,4 @@
 
-<<<<<<< HEAD
 //=========== VALIDATION CREATE USER =====================;
 
 const isValid = function (value) {
@@ -9,13 +8,6 @@ const isValid = function (value) {
 };
 
 
-         
-
-
-// Destructuring 
-module.exports = { isValid };
-
-=======
 // validation for  User  title of enum
 const isValidUserTitle = function (value) {
           if (["Mr", "Mrs", "Miss"].includes(value)) {
@@ -72,5 +64,4 @@ const isValidReleasedAt = function(value){
 }
 
 // Destructuring 
-module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword,isValidReleasedAt };
->>>>>>> 0de546581f8078a88570cf4b0518c72b19799607
+module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword,isValidReleasedAt,isValid };
