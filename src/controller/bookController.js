@@ -1,6 +1,6 @@
 const bookModel = require('../Models/bookModel');
 const mongoose = require('mongoose');
-const validations = require('../validation/validation.js');
+const validator = require('validator');
 
 // create book
 const createBook = async function (req, res) {
@@ -51,7 +51,7 @@ const createBook = async function (req, res) {
                     if (!releasedAt) {
                               return res.status(400).send({ status: false, message: "releasedAt filed is required " });
                     }
-                    if (!validations.isValidReleasedAt(releasedAt)) {
+                    if (!validator.isDate(releasedAt)) {
                               return res.status(400).send({ status: false, message: " releasedAt  Invalid format" });
                     }
                     const uniqueTitle = await bookModel.findOne({ title });
@@ -63,13 +63,14 @@ const createBook = async function (req, res) {
                               return res.status(400).send({ status: false, message: "ISBN is alreday exist" });
                     }
                     const saveData = await bookModel.create(req.body);
-                    return res.status(201).send({ status: true, message: 'success', data: saveData });
+                    return res.status(201).send({ status: true, message:'success', data: saveData });
           } catch (error) {
                     console.log(error);
                     return res.status(500).send({ status: true, massage: error.massage });
           }
 };
-module.exports.createBook = createBook
+
+
 
 
 
@@ -90,9 +91,35 @@ module.exports.createBook = createBook
 //                     return res.status(200).send({status: true})
 //           }
 
-// }
+// 
+// DELETE /books/:bookId
+// Check if the bookId exists and is not deleted. If it does,
+//  mark it deleted and return an HTTP status 200 with a response body with status and message.
+// If the book document doesn't exist then return an HTTP status of 404 with a body like this
+const deleteBookById = async function(req,res){
+    try{
+    let bookId = req.params.bookId
+    if(!mongoose.isValidObjectId(bookId)){
+        return res.status(400).send({status:false,message:"bookId is not valid format"})
+    }
+    let book = await bookModel.findOne({bookId:bookId,isDeleted:false})
+    if(!book){
+        return res.status(400).send({status:false,message:"bookId is not matching with any existing bookId"})
+    }
+    let deleteBook = await bookModel.findOneAndUpdate({_id:bookId,isDeleted:false},
+        {$set:{isDeleted:true,deletedAt:new Date()}
+    }
+        )
+        if(deleteBook){
+        return res.status(200).send({status:true,message:"successfully deleted"})
+        }
+    } catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
+    }
 
-
+}
+module.exports.createBook = createBook
+module.exports.deleteBookById=deleteBookById
 
 
 

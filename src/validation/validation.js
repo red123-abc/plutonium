@@ -53,15 +53,16 @@ const isValidPassword = function (value) {
 
 };
 // bookController reviews validation
-const isValidReleasedAt = function(value){
-    if(! /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/.test(value)){
-        return true;
-    }
-    else{
-        return false
-    }
 
-}
+// const isValidReleasedAt = function(value){
+//     if(! .test(value)){
+//         return true;
+//     }
+//     else{
+//         return false
+//     }
+
+// }
 
 // Destructuring 
-module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword,isValidReleasedAt,isValid };
+module.exports = { isValidUserTitle,isValidUserName, isValidUserPhone, isValidUserEmail, isValidPassword,isValid };

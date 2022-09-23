@@ -3,15 +3,17 @@ const router = express.Router();
 const bookController = require("../controller/bookController")
 const reviewController = require("../controller/reviewController")
 const userController = require("../controller/userController")
+const middleware = require("../middleware/auth");
 
 
-//=========We have created USER API==================
 
+// user
 router.post('/register', userController.userCreate);
 router.post('/login', userController.loginUser)
 
-//========================= createBook =============
-router.post('/createsBook',bookController.createBook)
+// book
+router.post('/books',middleware.authentication,bookController.createBook)
+router.delete('/books/:bookId',middleware.authentication,middleware.authorizations,bookController.deleteBookById )
 
 
 
