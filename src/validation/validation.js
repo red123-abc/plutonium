@@ -1,4 +1,4 @@
-
+// const moment = require('moment');
 //=========== VALIDATION CREATE USER =====================;
 
 const isValid = function (value) {
@@ -6,6 +6,12 @@ const isValid = function (value) {
           if (typeof value === 'string' && value.trim().length === 0) return false;
           return true;
 };
+
+// ======== Validation of releasedAt 
+// const isValidDate = function (date) {
+//           if (typeof date != "string") return false;
+//           return moment(date, 'YYYY-MM-DD', true).isValid();
+// }
 
 
          

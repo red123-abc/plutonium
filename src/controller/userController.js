@@ -58,27 +58,27 @@ const userCreate = async function (req, res) {
         if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(password)) {
             return res.status(400).send({ status: false, massage: " Password should be 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter" });
         };
-        if (!address) {
-            return res.status(400).send({ status: false, massage: "Address is required" });
-        };
+        // if (!address) {
+        //     return res.status(400).send({ status: false, massage: "Address is required" });
+        // };
         if (address && typeof address != "object") {
             return res.status(400).send({ status: false, message: "Address is in wrong format" });
         };
-        if (!address.street) {
-            return res.status(400).send({ status: false, message: "Street is required" });
-        };
+        // if (!address.street) {
+        //     return res.status(400).send({ status: false, message: "Street is required" });
+        // };
         if (!validations.isValid(address.street)) {
             return res.status(400).send({ status: false, message: "Street is Empty" });
         };
-        if (!address.city) {
-            return res.status(400).send({ status: false, message: "City is required" });
-        };
+        // if (!address.city) {
+        //     return res.status(400).send({ status: false, message: "City is required" });
+        // };
         if (!validations.isValid(address.city)) {
             return res.status(400).send({ status: false, message: "City is  Empty" });
         };
-        if (!address.pincode) {
-            return res.status(400).send({ status: false, message: "Pincode is required" });
-        };
+        // if (!address.pincode) {
+        //     return res.status(400).send({ status: false, message: "Pincode is required" });
+        // };
         if (!/^[1-9][0-9]{5}$/.test(address.pincode.trim())) {
             return res.status(400).send({ status: false, massage: "Pincode is invalid formet" });
         }
@@ -126,7 +126,6 @@ const loginUser = async function (req, res) {
         return res.status(500).send({ status: false, massage: error.massage });
     }
 };
-
 
 
 

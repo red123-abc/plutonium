@@ -1,8 +1,10 @@
+const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 const bookController = require("../controller/bookController")
 const reviewController = require("../controller/reviewController")
 const userController = require("../controller/userController")
+const middleware =require("../middleware/auth.js")
 
 
 
@@ -11,10 +13,11 @@ const userController = require("../controller/userController")
 router.post('/register', userController.userCreate);
 router.post('/login', userController.loginUser)
 
+
 //========================= createBook =============
-router.post('/createsBook',bookController.createBook)
+router.post('/createsBook', middleware.authentication ,bookController.createBook)
 
-
+// router.put('/books/:bookId', bookController.updateBook)
 
 
 

@@ -13,7 +13,7 @@ try {
           if(validToken){
                     jwt.verify(token, "project-booksManagementGroup59")
           }
-                 req.decodedToken = validToken;
+              //    req.decodedToken = validToken;
                  next();
        }
  } catch (error) {
@@ -51,3 +51,6 @@ const authorizations = async function (req, res, next) {
 
 // Destructuring
 module.exports = { authentication, authorizations }
+
+
+
