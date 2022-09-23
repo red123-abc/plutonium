@@ -2,6 +2,7 @@ const userModel = require('../Models/userModel');
 const validations = require('../validation/validation.js');
 const jwt =require('jsonwebtoken')
 
+
 // =================================== CREATE USER ==================================
 
 const userCreate = async function (req, res) {
@@ -119,7 +120,7 @@ const loginUser = async function (req, res) {
         }
         );
 
-        return res.status(200).send({ status: true, message: "User logged in successfully" , data: token });
+        return res.status(200).send({ status: true, message: "User logged in successfully" , data:token });
 
     } catch (error) {
         console.log(error)

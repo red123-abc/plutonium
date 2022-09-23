@@ -1,9 +1,11 @@
 const bookModel = require('../Models/bookModel');
 const mongoose = require('mongoose');
 const validations = require('../validation/validation.js');
+const validator = require('validator');
 
 // ================================ Create book ==========================
 const createBook = async function (req, res) {
+
      try {
           let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = req.body;
           // check body present or not
@@ -51,7 +53,7 @@ const createBook = async function (req, res) {
           if (!releasedAt) {
                return res.status(400).send({ status: false, message: "releasedAt filed is required " });
           }
-          if (!validations.isValidReleasedAt(releasedAt)) {
+          if (!validator.isDate(releasedAt)) {
                return res.status(400).send({ status: false, message: " releasedAt  Invalid format" });
           }
           const uniqueTitle = await bookModel.findOne({ title });
@@ -68,10 +70,76 @@ const createBook = async function (req, res) {
           console.log(error);
           return res.status(500).send({ status: true, massage: error.massage });
      }
+}
+  
+
+// ==============================GET BOOK===============
+const getBooks = async function (req, res) {
+  try {
+    let data = req.query;
+    let { userID, category, subcategory } = data;
+    data.isDeleted = false;
+    if (category === "")
+      return res.status(400).send({ status: false, massage: "please enter category value" });
+    if (subcategory === "")
+      return res.status(400).send({ status: false, massage: "please enter subcategory value" });
+    if (userID === "")
+      return res.status(400).send({ status: false, massage: "please enter userID value" });
+    if (userID) {
+      if (!mongoose.Types.ObjectId.isValid(data.userID))
+        return res.send(400).send({ status: false, massage: "please enter correct userID" });
+      let bookData = await bookModel.find(data).select({
+          _id: 1,
+          excerpt: 1,
+          userID: 1,
+          category: 1,
+          releasedAt: 1,
+          reviews: 1,
+        });
+      if (bookData.length == 0)
+        return res.send(400({status: false, massage: "data is not found please enter valid bookData",})
+        );
+      bookData = bookData.sort(function (a, b) {
+        return a.title.localeCompare(b.title);
+      });
+      return res
+        .status(200)
+        .send({ status: true, massage: "successfull", data: bookData });
+    }
+  } catch (error) {
+    return res.status(500).send({ status: false, massage: error.massage });
+  }
 };
 
 
+//======================  get using params ====================
 
+const getBookById = async function (req, res) {
+    try {
+        let bookId = req.params.bookId
+
+        if (!mongoose.Types.ObjectId.isValid(bookId)) {
+            return res.status(400).send({ status: false, message: `${bookId} is invalid` })
+        }
+        let getSpecificBooks = await bookModel.findOne({ _id: bookId, isDeleted: false });
+        if (!getSpecificBooks) {
+            return res
+                .status(404)
+                .send({ status: false, data: "No books can be found" });
+        }
+
+        let result = await reviewModel.find({ _id: bookId, isDeleted: false })
+
+        const details = getSpecificBooks._doc;
+        details.reviewsData = result;
+
+        return res.status(200).send({ status: true, data: details });
+
+
+    } catch (error) {
+        res.status(500).send({ status: false, err: error.message });
+    }
+}
 
 // ======================= PUT Api By Params BookId===========================
 
@@ -107,7 +175,7 @@ const updateBook = async function (req, res) {
                return res.status(400).send({ status: false, message: `title ${title} already exists!` });
           };
           if (excerpt) {
-               if (!validations.isValid(excerpt)){
+               if (!validations.isValid(excerpt)) {
                     return res.status(400).send({ status: false, message: "Excerpt is Empty" });
                }
           }
@@ -130,7 +198,8 @@ const updateBook = async function (req, res) {
                }
           }
           if (!validations.isValidReleasedAt(releasedAt)) {
-               return res.status(400).send({status: false, message: "Required (YYYY-MM-DD)"
+               return res.status(400).send({
+                    status: false, message: "Required (YYYY-MM-DD)"
                });
           }
 
@@ -139,14 +208,39 @@ const updateBook = async function (req, res) {
 
 
      } catch (error) {
-          console.log(error)
-               return res.status(500).send({ status: false, message: error.message });
+          console.log(error);
+          return res.status(500).send({ status: false, message: error.message });
+     }
+};
+
+
+//=======================  et by delete ===========================
+
+const deleteBookById = async function (req, res) {
+     try {
+          let bookId = req.params.bookId;
+          if (!mongoose.isValidObjectId(bookId)) {
+               return res.status(400).send({ status: false, message: "bookId is not valid format" });
           }
+          let book = await bookModel.findOne({ bookId: bookId, isDeleted: false });
+          if (!book) {
+               return res.status(400).send({ status: false, message: "bookId is not matching with any existing bookId" });
+          }
+          let deleteBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false },
+               {
+                    $set: { isDeleted: true, deletedAt: new Date() }
+               }
+          );
+          if (deleteBook) {
+               return res.status(200).send({ status: true, message: "successfully deleted" });
+          }
+     } catch (err) {
+          return res.status(500).send({ status: false, message: err.message });
      }
 
+};
 
 
-// , { new: true }
 
-module.exports = { createBook };
+module.exports = { createBook, getBooks, getBookById, updateBook, deleteBookById };
 
