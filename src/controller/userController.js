@@ -112,23 +112,25 @@ const loginUser = async function (req, res) {
             userId: userData._id.toString(),
             batch: "plutonium",
             organization: "FunctionUp",
-
+        
+            exp: Math.floor(Date.now() / 1000) + (50 * 60), // After 50 min it will expire 			
+            iat: Math.floor(Date.now() / 1000)
         },
-            "project-booksManagementGroup59", {
+            "project-booksManagementGroup59", 
 
-            expiresIn: "24h" // expires in "24h"
-        }
+    
         );
+        let data = {token:token,userId: userData._id.toString(),
+            exp: Math.floor(Date.now() / 1000) + (50 * 60), // After 50 min it will expire 			
+            iat: Math.floor(Date.now() / 1000) 	
+        }
 
-        return res.status(200).send({ status: true, message: "User logged in successfully" , data:token });
+        return res.status(200).send({ status: true, message: "User logged in successfully" , data:data });
 
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, massage: error.massage });
     }
 };
-
-
-
 
 module.exports = { userCreate, loginUser };
