@@ -31,7 +31,7 @@ const userCreate = async function (req, res) {
         if (!phone) {
             return res.status(400).send({ status: false, message: "Phone is required" });
         };
-        if (!/^[789]\d{9}$/.test(phone.trim())) {
+        if (!/^[789]\d{9}$/.test(phone)) {
             return res.status(400).send({ status: false, message: "Please enter a valid phone number" });
         };
 
@@ -106,16 +106,27 @@ const loginUser = async function (req, res) {
         if (!userData){
             return res.status(400).send({ status: false, massage: "UserEmail and Password is not Correct" });
         } ;
-
         
-        let token = jwt.sign({ 
-            userId: userData._id.toString(),
-            iat: Math.floor(Date.now() / 1000) 
-        }, "project-booksManagementGroup59", { 
-            expiresIn: '24h' 
-        });
+        
+        let token = jwt.sign(
+            {
+                userId: userData._id.toString(),
+                exp: Math.floor(Date.now() / 1000) + (50 * 60),
+                iat: Math.floor(Date.now() / 1000)
+            }, "project-booksManagementGroup59");
 
-         return res.status(200).send({ status: true, message: "User logged in successfully" , data:token });
+        res.setHeader("x-api-key", token);
+
+        let data = {
+            token: token,
+            userId: userData._id.toString(),
+            exp: Math.floor(Date.now() / 1000) + (50 * 60),
+            iat: Math.floor(Date.now() / 1000)
+
+        }
+
+
+        return res.status(200).send({ status: true, message: "User logged in successfully", data: data });
       
     } catch (error) {
         console.log(error.message)

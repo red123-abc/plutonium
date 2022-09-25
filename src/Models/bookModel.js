@@ -42,8 +42,13 @@ const bookSchema = new mongoose.Schema(
     deletedAt: {
       type:Date
     }, //"when the document is deleted"
-    isDeleted: { type: Boolean, default: false },
-    releasedAt: { type: Date, required: true }, //format("YYYY-MM-DD")
+    isDeleted: { 
+      type: Boolean, 
+      default: false 
+    },
+    releasedAt: { 
+      type: Date, required: true 
+    }, //format("YYYY-MM-DD")
   },
   { timestamps: true }
 );

@@ -1,12 +1,9 @@
-const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
 const bookController = require("../controller/bookController")
 const reviewController = require("../controller/reviewController")
 const userController = require("../controller/userController")
 const middleware =require("../middleware/auth.js")
-
-
 
 
 //========================= create And login User =============
@@ -27,9 +24,7 @@ router.put('/books/:bookId/review/:reviewId', reviewController.updateReviewBookB
 router.delete('/books/:bookId/review/:reviewId',reviewController.deleteBookReview) 
 
 
-
-
-
+// ================= Invalid Request Url ===============
 
 router.all('/**', function(req,res){
           return res.status(400).send({status: false , massage: "Invalid request"})

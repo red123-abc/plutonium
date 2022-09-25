@@ -8,6 +8,7 @@ const isValid = function (value) {
           return true;
 };
 
+// ============ Alphabetical for Book documents ====================
 const alphabetTestOfString = function (value) {
     if (!/^[A-Za-z ]+$/.test(value)) {
     return false
