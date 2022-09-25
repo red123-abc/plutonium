@@ -57,7 +57,7 @@ const userCreate = async function (req, res) {
             return res.status(400).send({ status: false, massage: "Password is requires" });
         };
         if (! /^[a-zA-Z0-9]{8,15}$/.test(password)) {
-            return res.status(400).send({ status: false, message: " Password should be 8 to 15 characters which contain at least one numeric digit, one uppercase and one lowercase letter" });
+            return res.status(400).send({ status: false, message: " Password should be 8 to 15 characters" });
         };
         if (address && typeof address != "object") {
             return res.status(400).send({ status: false, message: "Address is in wrong format" });
