@@ -11,88 +11,75 @@ const userCreate = async function (req, res) {
         let { title, name, phone, email, password, address, } = req.body;
 
         if (Object.keys(req.body).length == 0) {
-            return res.status(400).send({ status: false, msg: "Body is empty, please Provide data" });
+            return res.status(400).send({ status: false, message: "Body is empty, please Provide data" });
         };
         if (!title) {
-            return res.status(400).send({ status: false, massage: "Title is required" });
+            return res.status(400).send({ status: false, message: "Title is required" });
         };
-        if (!["Mr", "Mrs", "Miss"].includes(title) && !validations.isValid(title)) {
-            return res.status(400).send({ status: false, massage: "Title is in wrong format" });
+        if (!(["Mr", "Mrs", "Miss"].indexOf(title) !== -1)) {
+            return res.status(400).send({ status: false, message: "Title is in wrong format" });
         };
         if (!name) {
-            return res.status(400).send({ status: false, massage: "Name is required" });
+            return res.status(400).send({ status: false, message: "Name is required" });
         };
         if (!validations.isValid(name)) {
-            return res.status(400).send({ status: false, massage: "Name is Empty" });
+            return res.status(400).send({ status: false, message: "Name is Empty" });
         };
         if (!/^[ a-z ]+$/i.test(name)) {
-            return res.status(400).send({ status: false, massage: "Name is in wrong formet" });
+            return res.status(400).send({ status: false, message: "Name is in wrong formet" });
         };
         if (!phone) {
-            return res.status(400).send({ status: false, massage: "Phone is required" });
+            return res.status(400).send({ status: false, message: "Phone is required" });
         };
         if (!/^[789]\d{9}$/.test(phone.trim())) {
-            return res.status(400).send({ status: false, massage: "Please enter a valid phone number" });
+            return res.status(400).send({ status: false, message: "Please enter a valid phone number" });
         };
 
         let duplicatePhone = await userModel.findOne({ phone: phone });
         if (duplicatePhone) {
-            return res.status(400).send({ status: false, message: "Phone No. already exists!" });
+            return res.status(400).send({ status: false, message: `Phone No. already exists `});
         };
         if (!email) {
-            return res.status(400).send({ status: false, massage: "Email is required" });
+            return res.status(400).send({ status: false, message: "Email is required" });
         };
         if (!validations.isValid(email)) {
-            return res.status(400).send({ status: false, massage: "Email is Empty" });
+            return res.status(400).send({ status: false, message: "Email is Empty" });
         };
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email.trim())) {
-            return res.status(400).send({ status: false, massage: "Email is invalid formet" });
+            return res.status(400).send({ status: false, message: "Email is invalid formet" });
         };
 
         let duplicateEmail = await userModel.findOne({ email: email });
         if (duplicateEmail) {
-            return res.status(400).send({ status: false, message: "Email already exists!" });
+            return res.status(400).send({ status: false, message: `Email already exists` });
         };
         if (!password) {
             return res.status(400).send({ status: false, massage: "Password is requires" });
         };
-        if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(password)) {
-            return res.status(400).send({ status: false, massage: " Password should be 6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter" });
+        if (! /^[a-zA-Z0-9]{8,15}$/.test(password)) {
+            return res.status(400).send({ status: false, message: " Password should be 8 to 15 characters which contain at least one numeric digit, one uppercase and one lowercase letter" });
         };
-        // if (!address) {
-        //     return res.status(400).send({ status: false, massage: "Address is required" });
-        // };
         if (address && typeof address != "object") {
             return res.status(400).send({ status: false, message: "Address is in wrong format" });
         };
-        // if (!address.street) {
-        //     return res.status(400).send({ status: false, message: "Street is required" });
-        // };
         if (!validations.isValid(address.street)) {
             return res.status(400).send({ status: false, message: "Street is Empty" });
         };
-        // if (!address.city) {
-        //     return res.status(400).send({ status: false, message: "City is required" });
-        // };
         if (!validations.isValid(address.city)) {
             return res.status(400).send({ status: false, message: "City is  Empty" });
         };
-        // if (!address.pincode) {
-        //     return res.status(400).send({ status: false, message: "Pincode is required" });
-        // };
         if (!/^[1-9][0-9]{5}$/.test(address.pincode.trim())) {
-            return res.status(400).send({ status: false, massage: "Pincode is invalid formet" });
-        }
+            return res.status(400).send({ status: false, message: "Pincode is invalid formet" });
+        };
 
         let saveData = await userModel.create(req.body);
-        return res.status(201).send({ status: true, massage: "success", data: saveData });
-    }
-    catch (error) {
+        return res.status(201).send({ status: true, message: "success", data: saveData });
+
+    }catch (error) {
         console.log(error);
-        return res.status(500).send({ status: false, massage: error.massage });
+        return res.status(500).send({ status: false, message: error.massage });
     }
 };
-
 
 //=============================== LOGIN USER  ===============================
 
@@ -101,36 +88,40 @@ const loginUser = async function (req, res) {
         let userEmail = req.body.email;
         let password = req.body.password;
 
-        if (!userEmail && !password)
-            return res.status(400).send({ status: false, massage: "please enter username and password" });
+        if (!userEmail  ){
+            return res.status(400).send({ status: false, massage: "Please enter userEmail" })
+        };
+        if (!validations.isValid(userEmail.trim())){
+            return res.status(400).send({status: false, message: "Email Value Empty"})
+        };
+        if ( !password){
+            return res.status(400).send({ status: false, massage: "Please enter  password" });
+        };
+        if (!validations.isValid(password.trim())) {
+            return res.status(400).send({ status: false, message: "password Value Empty" });
+        };
 
         let userData = await userModel.findOne({ email: userEmail, password: password });
-        if (!userData)
+
+        if (!userData){
             return res.status(400).send({ status: false, massage: "UserEmail and Password is not Correct" });
+        } ;
 
-        let token = jwt.sign({
-            userId: userData._id.toString(),
-            batch: "plutonium",
-            organization: "FunctionUp",
         
-            exp: Math.floor(Date.now() / 1000) + (50 * 60), // After 50 min it will expire 			
-            iat: Math.floor(Date.now() / 1000)
-        },
-            "project-booksManagementGroup59", 
+        let token = jwt.sign({ 
+            userId: userData._id.toString(),
+            iat: Math.floor(Date.now() / 1000) 
+        }, "project-booksManagementGroup59", { 
+            expiresIn: '24h' 
+        });
 
-    
-        );
-        let data = {token:token,userId: userData._id.toString(),
-            exp: Math.floor(Date.now() / 1000) + (50 * 60), // After 50 min it will expire 			
-            iat: Math.floor(Date.now() / 1000) 	
-        }
-
-        return res.status(200).send({ status: true, message: "User logged in successfully" , data:data });
-
+         return res.status(200).send({ status: true, message: "User logged in successfully" , data:token });
+      
     } catch (error) {
-        console.log(error)
+        console.log(error.message)
         return res.status(500).send({ status: false, massage: error.massage });
     }
 };
+
 
 module.exports = { userCreate, loginUser };

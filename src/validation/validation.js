@@ -8,8 +8,15 @@ const isValid = function (value) {
           return true;
 };
 
+const alphabetTestOfString = function (value) {
+    if (!/^[A-Za-z ]+$/.test(value)) {
+    return false
+}
+return true
+}
+
 
 
 // Destructuring 
-module.exports = {  isValid };
+module.exports = {  isValid,alphabetTestOfString };
 
