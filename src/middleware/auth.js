@@ -15,7 +15,7 @@ const authentication = function (req, res, next) {
 
               const validToken = jwt.decode(token);
               if (validToken) {
-                     jwt.verify(token, "project-booksManagementGroup59", (error) => {
+                     jwt.verify(token, "project-booksManagementGroup55", (error) => {
                             if (error) {
                                    // console.log("Auth error", err); 
                                    return res.status(400).send({ status: false, message: 'Token is Not Valid' });
@@ -45,7 +45,7 @@ const authorizations = async function (req, res, next) {
                      return res.status(404).send({ status: false, msg: "No book found " });
               };
               const token = req.headers["x-api-key"];
-              const decodedToken = jwt.verify(token, "project-booksManagementGroup59");
+              const decodedToken = jwt.verify(token, "project-booksManagementGroup55");
 
               if (decodedToken.userId == findBook.userId) {
                      next();

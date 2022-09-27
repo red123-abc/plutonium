@@ -72,7 +72,7 @@ const userCreate = async function (req, res) {
                 if (!validations.isValid(address.pincode)) {
                     return res.status(400).send({ status: false, message: "Pincode cannot be empty" });
                 }
-                let pincode = document.address.pincode;
+                let pincode = address.pincode;
 
                 if (!/^[1-9][0-9]{5}$/.test(pincode)) return res.status(400).send({ status: false, msg: " Please Enter Valid Pincode Of 6 Digits" });
 
@@ -118,9 +118,9 @@ const loginUser = async function (req, res) {
         let token = jwt.sign(
             {
                 userId: userData._id.toString(),
-                exp: "24h",
+                exp: Math.floor(Date.now() / 1000) + (50 * 60),
                 iat: Math.floor(Date.now() / 1000)
-            }  , "project-booksManagementGroup59");
+            }  , "project-booksManagementGroup55");
 
         res.setHeader("x-api-key", token);
 
