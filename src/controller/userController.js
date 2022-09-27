@@ -111,16 +111,16 @@ const loginUser = async function (req, res) {
         let userData = await userModel.findOne({ email: userEmail, password: password });
 
         if (!userData) {
-            return res.status(400).send({ status: false, massage: "UserEmail and Password is not Correct" });
+            return res.status(401).send({ status: false, massage: "UserEmail and Password is not Correct" });
         };
 
 
         let token = jwt.sign(
             {
                 userId: userData._id.toString(),
-                exp: Math.floor(Date.now() / 1000) + (50 * 60),
+                exp: "24h",
                 iat: Math.floor(Date.now() / 1000)
-            }, "project-booksManagementGroup59");
+            }  , "project-booksManagementGroup59");
 
         res.setHeader("x-api-key", token);
 
