@@ -1,8 +1,9 @@
 const urlModel = require("../models/urlModel");
+const axios = require("axios");
 const shortid = require("shortid");
 const validurl = require("valid-url");
 const redis = require("redis");
-const { promisify } = require("util");
+// const { promisify } = require("util");
 
 const redisClient = redis.createClient({
   url: "redis://default:hK7UbOAOQKQcTYBUWZgmhSeR0HkX6I9V@redis-17960.c264.ap-south-1-1.ec2.cloud.redislabs.com:17960",
@@ -34,7 +35,7 @@ const webhost = "http://localhost:3000/";
 
 const createUrl = async function (req, res) {
   try {
-    if (Object.keys(req.body).length === 0) {
+    if (Object.keys(req.body).length === 0 || !req.body.longUrl) {
       return res
         .status(400)
         .send({ status: false, message: "please provide longUrl!!" });
@@ -57,7 +58,10 @@ const createUrl = async function (req, res) {
         data: JSON.parse(cahcedData),
       });
     }
-    const urlExists = await urlModel.findOne({ longUrl: longUrl });
+
+    const urlExists = await urlModel
+      .findOne({ longUrl: longUrl })
+      .select({ urlCode: 1, longUrl: 1, shortUrl: 1 });
     if (urlExists) {
       await redisClient.set(`${urlExists.longUrl}`, JSON.stringify(urlExists));
       return res.status(200).send({
@@ -66,19 +70,39 @@ const createUrl = async function (req, res) {
         data: urlExists,
       });
     }
+    let accessibleLink = false;
+    await axios
+      .get(longUrl)
+      .then((res) => {
+        if (res.status == 200 || res.status == 201) {
+          accessibleLink = true;
+        }
+      })
+      .catch((error) => {
+        accessibleLink = false;
+      });
+
+    if (accessibleLink == false) {
+      return res
+        .status(400)
+        .send({ status: false, message: "longurl is not accessible!!" });
+    }
     const urlCode = shortid.generate().toLowerCase();
     data.urlCode = urlCode;
 
     data.shortUrl = webhost + urlCode;
     const dataCreated = await urlModel.create(data);
-    await redisClient.set(
-      `${dataCreated.longUrl}`,
-      JSON.stringify(dataCreated)
-    );
+    const response = {
+      urlCode: dataCreated.urlCode,
+      longUrl: dataCreated.longUrl,
+      shortUrl: dataCreated.shortUrl,
+    };
+
+    await redisClient.set(`${dataCreated.longUrl}`, JSON.stringify(response));
     return res.status(201).send({
       status: true,
       message: " ShortUrl created!!!",
-      data: dataCreated,
+      data: response,
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -87,6 +111,11 @@ const createUrl = async function (req, res) {
 const getUrl = async function (req, res) {
   try {
     const urlCode = req.params.urlCode;
+    if (!shortid.isValid(urlCode)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Invalid urlCode!!" });
+    }
     // let cahcedData = await GET_ASYNC(`${urlCode}`);
     let cahcedData = await redisClient.get(`${urlCode}`);
     if (cahcedData) {
