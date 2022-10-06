@@ -9,7 +9,7 @@ app.use(express.json());
 
 mongoose
   .connect(
-    "mongodb+srv://mohitkanwaria_:IZ2vta9qwavx3n0S@cluster0.2byd2qy.mongodb.net/group23Database?retryWrites=true&w=majority",
+    "mongodb+srv://prabhas:Password1*@cluster0.j1kcoh4.mongodb.net/group-29-Database",
     {
       useNewUrlParser: true,
     }
