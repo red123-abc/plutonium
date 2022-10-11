@@ -1,4 +1,5 @@
 module.exports={
     redis:require("./redis"),
-    validator:require("./validators")
+    validator:require("./validators"),
+    aws:require("./aws")
 }

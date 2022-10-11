@@ -2,8 +2,10 @@ const express = require("express")
 const mongoose = require("mongoose")
 const app = express()
 const route = require("./routes/route")
+const multer = require("multer")
 
 app.use(express.json())
+app.use(multer().any())
 
 mongoose.connect("mongodb+srv://Yogesh-B:rL3Qx2k0KgDJLnKK@cluster0.xffx0d4.mongodb.net/group38Database",
     {useNewUrlParser:true}

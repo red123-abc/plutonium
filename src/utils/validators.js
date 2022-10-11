@@ -40,10 +40,13 @@ function isLetters(data){
 }
 
 function isValidPincode(data){
-    if(typeof data =="string" && data.trim().length !==0 && pincodeRegex.test(data.trim())) return true
+    if(typeof data =="number" && pincodeRegex.test(data)) return true
     return false
 }
 
+function isValidObjectId (data){
+    return mongoose.Types.ObjectId.isValid(data)
+}
 
 module.exports={
     isValid,
@@ -53,5 +56,6 @@ module.exports={
     isValidImageUrl,
     isValidObject,
     isValidPincode,
-    isLetters
+    isLetters,
+    isValidObjectId
 }
