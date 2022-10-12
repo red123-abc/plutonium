@@ -2,7 +2,7 @@ const userModel = require("../models/userModel")
 const {redis,validator,aws} = require("../utils")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const { set } = require("mongoose")
+
 
 const newUser = async function(req,res){
     try{
@@ -125,9 +125,7 @@ const newUser = async function(req,res){
 
     }     
     catch(err){
-        
         return res.status(500).send({status:false, message:err.message})
-       
     }
 }
 
@@ -163,14 +161,13 @@ const login = async function(req,res){
                 let token = jwt.sign(
                     {
                       userId: user._id.toString(),
-                      Team: "Group 38",
-                      organisation: "FunctionUp"
+                      
                     },
                     "confidential-Group38-secret-key", 
                     { expiresIn: '1h' }
                   );
               
-                  return res.status(200).send({ status: true, msg: "login successful", data: {  userId: user._id ,token: token } });
+                  return res.status(200).send({ status: true, message: "login successful", data: {  userId: user._id ,token: token } });
             }
             else{
                 return res.status(401).send({status:false, message:"Invalid credentials"})

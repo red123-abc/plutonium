@@ -48,6 +48,16 @@ function isValidObjectId (data){
     return mongoose.Types.ObjectId.isValid(data)
 }
 
+function isValidSize(data){
+    let arr=["S", "XS","M","X", "L","XXL", "XL"]
+    return arr.includes(data)
+}
+
+function makingArray(data){
+    arr=data.trim().split(" ").filter(x=>x.trim().length>0)
+    return arr
+}
+
 module.exports={
     isValid,
     isValidPhoneNumber,
@@ -57,5 +67,7 @@ module.exports={
     isValidObject,
     isValidPincode,
     isLetters,
-    isValidObjectId
+    isValidObjectId,
+    isValidSize,
+    makingArray
 }

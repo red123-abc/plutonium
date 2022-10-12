@@ -8,4 +8,6 @@
 // })
 // bcrypt.hash("pass",10).then((result)=>console.log(result))
 
-console.log(undefined||undefined)
+
+let str=["   one    two   "]
+console.log(Object .prototype.toString.call(str ))

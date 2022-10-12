@@ -3,11 +3,12 @@ const secreteKey = "confidential-Group38-secret-key"
 
 const authenticationMid = async function(req,res,next){
     try{
-        const bearerToken = req.headers["authentication"].split(" ")[1]
+        let bearerToken = req.headers["authorization"]
+        // console.log(req.headers)
         if(typeof bearerToken == "undefined"){
-            return  res.status(400).send({status:false, message:"token is missing"}) 
+            return  res.status(400).send({status:false, message:"bearer token is missing"}) 
         }
-
+        bearerToken=bearerToken.split(" ")[1]
         const decode = jwt.verify(
             bearerToken,
             secreteKey,
