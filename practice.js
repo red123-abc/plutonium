@@ -11,6 +11,5 @@
 
 // let str=["   one  ,  two   "]
 // console.log(Object .prototype.toString.call(str ))
-obj={a:"1"}
-newObj = ''
-console.log(typeof JSON.parse('["a"]'))
+
+console.log(false||false)

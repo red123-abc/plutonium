@@ -195,7 +195,7 @@ const updateUser = async function(req,res){
             return res.status(400).send({status:false, message:"Invalid userID"})
         }
 
-        if(Object.keys(req.body).length==0){
+        if(!(Object.keys(req.body).length!=0 || req.files)){
             return res.status(400).send({status:false, message:"pls provide user details"}) 
         }
         console.log(req.body)
