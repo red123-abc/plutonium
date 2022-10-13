@@ -10,13 +10,13 @@ const newUser = async function(req,res){
     if(Object.keys(req.body).length==0){
         return res.status(400).send({status:false, message:"pls provide user details"}) 
     }
-    console.log(req.body.data)
-    let {fname,lname,email,profileImage,phone,password,address}=JSON.parse(req.body.data)
+    // console.log(req.body)
+    let {fname,lname,email,profileImage,phone,password,address}=req.body
     
     //======================= Check for mandatory fields & Validating fields that has type "string"  ==========================
     let mandatoryFields = ["fname","lname","email","phone","password","address"]
     for(let key of mandatoryFields){
-        if(!validator.isValid(JSON.parse(req.body.data)[key])){
+        if(!validator.isValid(req.body[key])){
             return res.status(400).send({status:false, message:`value of ${key} must be present `}) 
         }
     }
@@ -55,13 +55,21 @@ const newUser = async function(req,res){
             return res.status(400).send({status:false, message:err})
         }
         else{
-            console.log(result)
+            // console.log(result)
             password=result
         }
     })
 
    
     // validating address
+    
+    try{
+        address=JSON.parse(address)
+    }
+    catch(err){
+        return res.status(400).send({status:false, message:"address should be of object type", error:err.message})
+    }
+    
     if(!validator.isValidObject(address)){
         return res.status(400).send({status:false, message:"address can only be object type"})
     }
@@ -132,7 +140,7 @@ const newUser = async function(req,res){
 const login = async function(req,res){
     try{
         if(Object.keys(req.body).length==0){
-            return res.status(400).send({status:false, message:"pls provide user details"}) 
+            return res.status(400).send({status:false, message:"pls provide required details"}) 
         }
 
         let {email,password}=req.body
@@ -179,28 +187,6 @@ const login = async function(req,res){
     }
 }
 
-const getUser = async function(req,res){
-    try{
-        
-        const userId = req.params.userId
-        
-
-        if(!validator.isValidObjectId(userId)){
-            return res.status(400).send({status:false, message:"Invalid userId"})
-        }
-        
-        const userDetails = await userModel.findById(userId)
-        if(!userDetails){
-            return res.status(404).send({status:false, message:"no user found"})
-        }
-
-        return res.status(200).send({status:true, message:"User profile details", data:userDetails})
-    }
-    catch(err){
-        return res.status(500).send({status:false, message:err.message})
-    }
-}
-
 const updateUser = async function(req,res){
     try{
         const userId = req.params.userId
@@ -212,8 +198,8 @@ const updateUser = async function(req,res){
         if(Object.keys(req.body).length==0){
             return res.status(400).send({status:false, message:"pls provide user details"}) 
         }
-
-        let {fname,lname,email,profileImage,phone,password,address}=JSON.parse(req.body.data)
+        console.log(req.body)
+        let {fname,lname,email,profileImage,phone,password,address}=req.body
         let obj={}
     
         // validating fname
@@ -268,6 +254,13 @@ const updateUser = async function(req,res){
         
         // validating address
         if(address){
+            try{
+                address=JSON.parse(address)
+            }
+            catch(err){
+                return res.status(400).send({status:false, message:"address should be of object type", error:err.message})
+            }
+            
             if(!validator.isValidObject(address)){
                 return res.status(400).send({status:false, message:"address can only be object type"})
             }
@@ -361,6 +354,30 @@ const updateUser = async function(req,res){
         return res.status(500).send({status:false, message:err.message})
     }
 }
+
+const getUser = async function(req,res){
+    try{
+        
+        const userId = req.params.userId
+        
+
+        if(!validator.isValidObjectId(userId)){
+            return res.status(400).send({status:false, message:"Invalid userId"})
+        }
+        
+        const userDetails = await userModel.findById(userId)
+        if(!userDetails){
+            return res.status(404).send({status:false, message:"no user found"})
+        }
+
+        return res.status(200).send({status:true, message:"User profile details", data:userDetails})
+    }
+    catch(err){
+        return res.status(500).send({status:false, message:err.message})
+    }
+}
+
+
 
 module.exports={
     newUser,

@@ -7,30 +7,30 @@ const productModel = require("../models/productModel")
 const newProduct = async function(req,res){
     try{
         if(Object.keys(req.body).length==0){
-            return res.status(400).send({status:false, message:"pls provide user details"}) 
+            return res.status(400).send({status:false, message:"pls provide product details"}) 
         }
 
         console.log(req.body)
-        const requestBodyData = JSON.parse(req.body.data)
-        let {title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments,productImage}=requestBodyData
+        let {title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments,productImage}=req.body
 
         let mandatoryFields = ["title","description","price","availableSizes"]
 
         for(let key of mandatoryFields){
-            if(!validator.isValid(requestBodyData[key])){
+            if(!validator.isValid(req.body[key])){
                 return res.status(400).send({status:false, message:`value of ${key} must be present `}) 
             }
         }
 
-        let lettersField = ["title","description","style"]
-        for(let key in requestBodyData){
-            if(lettersField.includes(key) && !validator.isLetters(requestBodyData[key])){
+        let lettersField = ["title","style"]
+        for(let key in req.body){
+            if(lettersField.includes(key) && !validator.isLetters(req.body[key])){
                 return res.status(400).send({status:false,message:`${key} can only contain string of letters`})
             }
         }
         
         let numberfields = ["price","installments"]
-        for(let key in requestBodyData){
+        for(let key in req.body){
+            key=Number(key)
             if(numberfields.includes(key) && typeof key != "number"){
                 return res.status(400).send({status:false,message:`${key} should be type number`})
             }
@@ -58,9 +58,43 @@ const newProduct = async function(req,res){
         ///  availableSizes = "  s , xl " // = [" s , xl "] // ["  s ","    xl"] ====== ["S","XL"]
 
         if(availableSizes){
-            if(!validator.isStringsArray(availableSizes)){
-                return res.status(400).send({status:false, message:"Available sizes should be an array of strings and should contain only these values [S, XS , M , X, L , XXL , XL]"})
-            }
+            // try{
+
+            // }
+            // catch(err){
+
+            // }
+                // console.log(availableSizes)
+                console.log(JSON.parse(availableSizes))
+                let arr2 = ["S", "XS","M","X", "L","XXL", "XL"]
+                if (typeof availableSizes == "string") {
+                    let arr = availableSizes.split(",").join(" ")
+                    arr = arr.split(" ").filter(x=>x.trim().length>0).map(x=>x.trim().toUpperCase())
+                    // console.log(arr)
+                    for (let i = 0; i < arr.length; i++) {
+                        let x =arr[i]
+                        if(!arr2.includes(x)){
+                            return res.status(400).send({status:false , message : `only these ${arr2.join(",")} sizes are allowed`})
+                        }
+                    }
+                    availableSizes = arr
+                    
+                }
+            //     else if (Array.isArray(availableSizes)){
+            //        let arr= availableSizes
+            //     //    arr = arr.map(x=>x.split(",").map(x=>x.trim())).map(x=>x.split(" ").map(x=>x.trim())).filter(x=>x.trim().length>0).flat(Infinity)
+
+            //         arr=arr.map(x=>x.trim().split(",").map(x=>x.trim().toUpperCase())).flat(Infinity).filter(x=>x.trim().length>0)
+            //         console.log("arr")
+            //         for (let i = 0; i < arr.length; i++) {
+            //             let x =arr[i]
+            //             if(!arr2.includes(x)){
+            //                 return res.status(400).send({status:false , message : `only these ${arr2} sizes are allowed`})
+            //             }
+            //         }
+            //         availableSizes = arr
+            //     }
+            // console.log(availableSizes)
         }
 
 

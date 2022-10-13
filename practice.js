@@ -9,5 +9,8 @@
 // bcrypt.hash("pass",10).then((result)=>console.log(result))
 
 
-let str=["   one    two   "]
-console.log(Object .prototype.toString.call(str ))
+// let str=["   one  ,  two   "]
+// console.log(Object .prototype.toString.call(str ))
+obj={a:"1"}
+newObj = ''
+console.log(typeof JSON.parse('["a"]'))
