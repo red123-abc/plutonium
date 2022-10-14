@@ -1,9 +1,8 @@
 const userModel = require("../models/userModel")
 const {redis,validator,aws} = require("../utils")
+const {productModel} = require("../models")
 
-const productModel = require("../models/productModel")
-
-
+///////////==== NEW PRODUCT ====///////////////
 const newProduct = async function(req,res){
     try{
         if(Object.keys(req.body).length==0){
@@ -21,10 +20,9 @@ const newProduct = async function(req,res){
 
 
         let mandatoryFields = ["title","description","price","availableSizes"]
-
         for(let key of mandatoryFields){
             if(!validator.isValid(req.body[key])){
-                return res.status(400).send({status:false, message:`value of ${key} must be present `}) 
+                return res.status(400).send({status:false, message:`${key} must be present `}) 
             }
         }
 
@@ -57,7 +55,7 @@ const newProduct = async function(req,res){
         }
 
         if(isFreeShipping){
-            if(typeof isFreeShipping !== "boolean"){
+            if(!(isFreeShipping.trim().toLowerCase()=="true"||isFreeShipping.trim().toLowerCase()=="false")){
                 return res.status(400).send({status:false, message:"Type of isFreeShipping should be boolean"})
             }
         }
@@ -65,7 +63,7 @@ const newProduct = async function(req,res){
         if(availableSizes){
                 let arr2 = ["S", "XS","M","X", "L","XXL", "XL"]
                     let arr = availableSizes.split(",").join(" ")
-                    arr = arr.split(" ").filter(x=>x.trim().length>0).map(x=>x.trim().toUpperCase())
+                    arr = arr.split(" ").map(x=>x.trim().toUpperCase()).filter(x=>x.trim().length>0)
                     for (let i = 0; i < arr.length; i++) {
                         let x =arr[i]
                         if(!arr2.includes(x)){
@@ -100,7 +98,7 @@ const newProduct = async function(req,res){
     }
 }
 
-
+///////////==== UPDATE PRODUCT ====///////////////
 const updateProduct = async function(req,res){
     try{
         const productId = req.params.productId
@@ -112,7 +110,7 @@ const updateProduct = async function(req,res){
             return res.status(400).send({status:false, message:"pls provide product details for updation"}) 
         }
 
-        let {title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments,productImage}=JSON.parse(req.body.data)
+        let {title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments,productImage}=req.body
 
         let filter = {}
         if(title){
@@ -133,6 +131,7 @@ const updateProduct = async function(req,res){
             filter.description = description
         }
         if(price){
+            price=Number(price)
             if(typeof price != "number"){
                 return res.status(400).send({status:false, message:"Price should be type number"})
             }
@@ -153,7 +152,8 @@ const updateProduct = async function(req,res){
             
         }
         if(isFreeShipping){
-            if(typeof isFreeShipping !== "boolean"){
+            // console.log((isFreeShipping.trim().toLowerCase()))
+            if(!(isFreeShipping.trim().toLowerCase()=="true"||isFreeShipping.trim().toLowerCase()=="false")){
                 return res.status(400).send({status:false, message:"Type of isFreeShipping should be boolean"})
             }
             filter.isFreeShipping = isFreeShipping
@@ -164,6 +164,7 @@ const updateProduct = async function(req,res){
             }
             filter.style = style
         }
+      
         if(availableSizes){
             let arr2 = ["S", "XS","M","X", "L","XXL", "XL"]        
             let arr = availableSizes.split(",").join(" ")
@@ -178,6 +179,7 @@ const updateProduct = async function(req,res){
         }
 
         if(installments){
+            installments=Number(installments)
             if(typeof installments !== "number"){
                 return res.status(400).send({status:false, message:"Type of installment should be number"})
             }
@@ -201,8 +203,7 @@ const updateProduct = async function(req,res){
     }
 }
 
-
-
+///////////==== GET PRODUCT BY ID ====///////////////
 const getById = async function(req,res){
     try{
         const productId = req.params.productId
@@ -222,6 +223,7 @@ const getById = async function(req,res){
     }
 }
 
+///////////==== DELETE PRODUCT ====///////////////
 const deleteProduct = async function(req,res){
     try{
         const productId = req.params.productId
@@ -233,17 +235,19 @@ const deleteProduct = async function(req,res){
         if(!dProduct){
             return res.status(404).send({status:false, message:"product does not exist"})
         }
+        return res.status(200).send({status:true,message:"deleted Successfully"})
     }
     catch(err){
         return res.status(500).send({status:false, message:err.message})
     }
 }
 
+///////////==== GET PRODUCT BY PARAMS ====///////////////
 const getByQuery = async function(req,res){
     try{
-        const params = req.query 
+        let params = req.query 
         
-        const {size,name,priceGreaterThan,priceLessThan}=params
+        let {size,name,priceGreaterThan,priceLessThan,priceSort}=params
 
         let availParams = ["size","name","priceGreaterThan","priceLessThan","priceSort"]
         for(let key in params){
@@ -280,46 +284,47 @@ const getByQuery = async function(req,res){
                 params.size={$in:[...size]}
             }
         }
+        // console.log(name)
         if(name){
+            
             name=name.trim()
             if(!validator.isLetters(name)){
                 return res.status(400).send({status:false, message:"product name can only contains letters"})
             }
-            params.name={$regex:name, $options:"i"}
+            params.title={$regex:name, $options:"i"}
         }
 
         let arr=[priceGreaterThan,priceLessThan]
 
         if(priceLessThan && priceGreaterThan){
-            params.price={$and:[{$gt:priceGreaterThan},{$lt:priceLessThan}]}
+            params.$and=[{price:{$gt:priceGreaterThan}} , {price:{$lt:priceLessThan}}]
         }
         else{
             if(priceGreaterThan){
-                if(typeof priceGreaterThan !="number"){
-                    return res.status(400).send({status:false, message:`priceGreaterThan should be of number type`})
-                }
+               
                 params.price={$gt:priceGreaterThan}
             }
             else if(priceLessThan){
                 
-                params.price={$lt:priceGreaterThan}
+                params.price={$lt:priceLessThan}
             }
         }
 
         if(priceSort){
-            if(priceSort!=1 || priceSort!=-1){
+            // console.log(priceSort)
+            if(!(priceSort == 1 || priceSort == -1)){
                 return res.status(400).send({status:false, message:"priceSort can be -1 or 1"})
             }
         }
         params.isDeleted=false
-
+        
         const product = await productModel.find(params).sort({price:priceSort||1})
-        console.log(product)
+        
         if(product.length==0){
             return res.status(404).send({status:false, message:"no product found"})
         }
-
-        return res.status(200).send({status:true, message:"products", data:product})
+        const num = product.length
+        return res.status(200).send({status:true, message:`products-${num}`, data:product})
     }
     catch(err){
         return res.status(500).send({status:false, message:err.message})
