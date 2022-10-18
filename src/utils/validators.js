@@ -21,7 +21,7 @@ function isValid(data){
 }
 
 function isValidPassword(data){
-    if(passRegex.test(data) && data.length>8 && data.length<15) return true
+    if(passRegex.test(data) && data.length>=8 && data.length<=15) return true
     return false
 }
 
@@ -54,7 +54,7 @@ function isValidSize(data){
 }
 
 function makingArray(data){
-    arr=data.trim().split(" ").filter(x=>x.trim().length>0)
+    arr=data.trim().split(",").join(" ").split(" ").filter(x=>x.trim().length>0)
     return arr
 }
 

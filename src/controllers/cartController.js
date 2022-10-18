@@ -73,7 +73,6 @@ const createCart = async function(req,res){
         else{
             let obj={}
             obj.userId = mongoose.Types.ObjectId(userId)
-
             obj.items= [{
                 productId:productId,
                 quantity:1
@@ -130,6 +129,9 @@ const updateCart = async function(req,res){
         const cart = await cartModel.findById(cartId)
         if(!cart){
             return res.status(400).send({status:false, message:"no cart found"})
+        }
+        if(userId!=cart.userId){
+            return res.status(400).send({status:false, message:"different cartId is present"})
         }
 
         if(removeProduct==0){

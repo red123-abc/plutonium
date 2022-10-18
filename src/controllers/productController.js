@@ -1,4 +1,3 @@
-const userModel = require("../models/userModel")
 const {redis,validator,aws} = require("../utils")
 const {productModel} = require("../models")
 
@@ -9,7 +8,7 @@ const newProduct = async function(req,res){
             return res.status(400).send({status:false, message:"pls provide product details"}) 
         }
 
-        console.log(req.body)
+      
         let {title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments,productImage}=req.body
 
         for(let key in req.body){
@@ -35,9 +34,10 @@ const newProduct = async function(req,res){
         
         let numberfields = ["price","installments"]
         for(let key in req.body){
-            key=Number(key)
-            if(numberfields.includes(key) && typeof key != "number"){
-                return res.status(400).send({status:false,message:`${key} should be type number`})
+            if(numberfields.includes(key)){
+                if(isNaN(req.body[key])){
+                    return res.status(400).send({status:false,message:`${key} should be number`})
+                }
             }
         }
 
@@ -62,8 +62,7 @@ const newProduct = async function(req,res){
 
         if(availableSizes){
                 let arr2 = ["S", "XS","M","X", "L","XXL", "XL"]
-                    let arr = availableSizes.split(",").join(" ")
-                    arr = arr.split(" ").map(x=>x.trim().toUpperCase()).filter(x=>x.trim().length>0)
+                    let arr = validator.makingArray(availableSizes.toUpperCase()) 
                     for (let i = 0; i < arr.length; i++) {
                         let x =arr[i]
                         if(!arr2.includes(x)){
@@ -83,6 +82,7 @@ const newProduct = async function(req,res){
             return res.status(400).send({status:false, message:"no file found"})
         }
 
+        // uniqueness of title
         const duplicateData= await productModel.findOne({title})
         if(duplicateData){
             return res.status(409).send({status:false, message:"Title is already taken"})
@@ -152,7 +152,7 @@ const updateProduct = async function(req,res){
             
         }
         if(isFreeShipping){
-            // console.log((isFreeShipping.trim().toLowerCase()))
+           
             if(!(isFreeShipping.trim().toLowerCase()=="true"||isFreeShipping.trim().toLowerCase()=="false")){
                 return res.status(400).send({status:false, message:"Type of isFreeShipping should be boolean"})
             }
@@ -167,8 +167,7 @@ const updateProduct = async function(req,res){
       
         if(availableSizes){
             let arr2 = ["S", "XS","M","X", "L","XXL", "XL"]        
-            let arr = availableSizes.split(",").join(" ")
-            arr=arr.split(" ").map(x=>x.trim().toUpperCase()).filter(x=>x.trim().length>0)
+            let arr = validator.makingArray(availableSizes.toUpperCase())            
             for (let i = 0; i < arr.length; i++) {
                 let x =arr[i]
                 if(!arr2.includes(x)){
@@ -263,30 +262,18 @@ const getByQuery = async function(req,res){
         }
 
         if(size){
-            if(Object.prototype.toString.call(size)=="[object String]"){
-                let arrayOfSizes = validator.makingArray(size.toUpperCase())
-                for(let i=0;i<arrayOfSizes.length;i++){
-                    let arr=["S", "XS","M","X", "L","XXL", "XL"]
-                    if(!arr.includes(i)){
-                        return res.status(400).send({status:false, message:`size can only be from-${arr.join(",")}`})
-                    }
+            let arrayOfSizes = validator.makingArray(size.toUpperCase())
+          
+            for(let i=0;i<arrayOfSizes.length;i++){
+                let arr=["S","XS","M","X","L","XXL", "XL"]
+                if(!arr.includes(arrayOfSizes[i])){
+                    return res.status(400).send({status:false, message:`size can only be from-${arr.join(",")}`})
                 }
-                params.size={$in:[...arrayOfSizes]}
             }
-            else if(Object.prototype.toString.call(size)=="[object Array]"){
-                size = size.map(x=>x.trim().split(" ").filter(x=>x.trim().length>0)).flat(Infinity)
-                for(let i=0;i<size.length;i++){
-                    let arr=["S", "XS","M","X", "L","XXL", "XL"]
-                    if(!arr.includes(i)){
-                        return res.status(400).send({status:false, message:`size can only be from-${arr.join(",")}`})
-                    }
-                }
-                params.size={$in:[...size]}
-            }
+            params.availableSizes={$in:[...arrayOfSizes]} 
         }
-        // console.log(name)
+      
         if(name){
-            
             name=name.trim()
             if(!validator.isLetters(name)){
                 return res.status(400).send({status:false, message:"product name can only contains letters"})
@@ -311,7 +298,7 @@ const getByQuery = async function(req,res){
         }
 
         if(priceSort){
-            // console.log(priceSort)
+         
             if(!(priceSort == 1 || priceSort == -1)){
                 return res.status(400).send({status:false, message:"priceSort can be -1 or 1"})
             }
