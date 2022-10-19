@@ -93,7 +93,9 @@ const createCart = async function(req,res){
 const updateCart = async function(req,res){
     try{
         const userId = req.params.userId
-
+        if(!validator.isValidObject(req.body)){
+            return res.status(400).send({status:false, message:"Provide updation details"})
+        }
         if(!validator.isValidObjectId(userId)){
             return res.status(400).send({status:false, message:"Invalid userId"})
         }
@@ -133,7 +135,9 @@ const updateCart = async function(req,res){
         if(userId!=cart.userId){
             return res.status(400).send({status:false, message:"different cartId is present"})
         }
-
+        if(!(removeProduct == 0 || removeProduct == 1)){
+            return res.status(400).send({status:false, message:"removeProduct value can only be 0 or 1"})
+        }
         if(removeProduct==0){
             let {items,totalItems,totalPrice} = cart
             let flag = true
@@ -149,7 +153,7 @@ const updateCart = async function(req,res){
                 return res.status(400).send({status:false, message:"this product was not added in cart"})
             }
             const updatedCart = await cartModel.findByIdAndUpdate(cartId,{$set:{items,totalItems,totalPrice}},{new:true}).populate("items.productId","title price productImage")
-            return res.status(200).send({status:true, data:updatedCart})
+            return res.status(200).send({status:true,message : "Success", data:updatedCart})
         }
 
         else if (removeProduct==1){
@@ -170,7 +174,7 @@ const updateCart = async function(req,res){
                 return res.status(400).send({status:false, message:"this product was not added in cart"})
             }
             const updatedCart = await cartModel.findByIdAndUpdate(cartId,{$set:{items,totalItems,totalPrice}},{new:true}).populate("items.productId","title price productImage")
-            return res.status(200).send({status:true, data:updatedCart})
+            return res.status(200).send({status:true,message : "Success", data:updatedCart})
         }
     }
     catch(err){
@@ -231,7 +235,7 @@ const deleteCart = async function(req,res){
         if(!cart){
             return res.status(404).send({status:false, message:"no cart found"})
         }
-        
+        // console.log(cart)
         return res.status(204).send()
 
     }
