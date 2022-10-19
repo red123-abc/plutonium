@@ -106,6 +106,11 @@ const updateProduct = async function(req,res){
         if(!validator.isValidObjectId(productId)){
             return res.status(400).send({status:false, message:"Invalid productId"})
         }
+
+        // const findProduct = await productModel.findOne({_id:productId, isDeleted:false})
+        // if(!findProduct){
+        //     return res.status(404).send({status:false, message:"Product not found"})
+        // }
         if(!(Object.keys(req.body).length!=0 || req.files)){
             return res.status(400).send({status:false, message:"pls provide product details for updation"}) 
         }
@@ -131,8 +136,8 @@ const updateProduct = async function(req,res){
             filter.description = description
         }
         if(price){
-            price=Number(price)
-            if(typeof price != "number"){
+    
+            if(isNaN(price)){
                 return res.status(400).send({status:false, message:"Price should be type number"})
             }
             filter.price = price
@@ -179,7 +184,7 @@ const updateProduct = async function(req,res){
 
         if(installments){
             installments=Number(installments)
-            if(typeof installments !== "number"){
+            if(isNaN(installments)){
                 return res.status(400).send({status:false, message:"Type of installment should be number"})
             }
             filter.installments = installments
@@ -194,7 +199,9 @@ const updateProduct = async function(req,res){
         
 
         const updatedProduct = await productModel.findOneAndUpdate({_id:productId,isDeleted:false},filter,{new : true})
-
+        if(!updatedProduct){
+            return res.status(404).send({status:false, message:"Product not found"})
+        }
         return res.status(200).send({status:true, message:"Product updated successfully", data:updatedProduct})
 
     }catch(err){  
@@ -281,9 +288,16 @@ const getByQuery = async function(req,res){
             params.title={$regex:name, $options:"i"}
         }
 
-        let arr=[priceGreaterThan,priceLessThan]
-
+        // let arr=[priceGreaterThan,priceLessThan]
+        if(priceLessThan && isNaN(priceLessThan)){
+                return res.status(400).send({status:false, message:"Type of priceLessThan should be number"})
+            
+        }
+        if(priceGreaterThan && isNaN(priceGreaterThan) ){
+            return res.status(400).send({status:false, message:"Type of priceGreaterThan should be number"})
+        }
         if(priceLessThan && priceGreaterThan){
+
             params.$and=[{price:{$gt:priceGreaterThan}} , {price:{$lt:priceLessThan}}]
         }
         else{
@@ -311,16 +325,13 @@ const getByQuery = async function(req,res){
             return res.status(404).send({status:false, message:"no product found"})
         }
         const num = product.length
-        return res.status(200).send({status:true, message:`products-${num}`, data:product})
+        return res.status(200).send({status:true, message: "Success", count:`products-${num}`, data:product})
     }
     catch(err){
         return res.status(500).send({status:false, message:err.message})
     
     }
 }
-
-
-
 
 
 module.exports={
