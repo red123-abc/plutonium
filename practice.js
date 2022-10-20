@@ -58,7 +58,4 @@ class reserveBus extends reservation{
 }
 
 let bus = new reserveBus(40)
-let b=false+""
-if(b){
-console.log(b)
-}
+console.log(bus)
