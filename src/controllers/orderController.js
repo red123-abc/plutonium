@@ -21,8 +21,13 @@ const createOrder = async function(req,res){
             return res.status(400).send({status:false, message:"pls provide cart details"})
         }
         const {cartId,cancellable,status}=req.body
+        cartId=cartId.trim()
+        
         if(!cartId){
             return res.status(400).send({status:false, message:"cartId is mandatory"})
+        }
+        if(!validator.isValidObjectId(cartId)){
+            return res.status(400).send({status:false, message:"Invalid cartId"})
         }
        
         if(cancellable){
@@ -96,6 +101,8 @@ const updateOrder = async function(req,res){
             return res.status(400).send({status:false, message:"pls provide order details"})
         }
         let {orderId,status}=req.body
+        orderId = orderId.trim()
+        status=status.trim().toLowerCase()
         if(!orderId){
             return res.status(400).send({status:false, message:"pls provide order details to update"})
         }
@@ -106,15 +113,15 @@ const updateOrder = async function(req,res){
             return res.status(400).send({status:false, message:"pls provide status"})
         }
 
-        let arr=["pending", "completed", "canceled"]
+        let arr=["pending", "completed", "cancelled"]
         if(!arr.includes(status.trim().toLowerCase())){
             return res.status(400).send({status:false, message:`status can be only -${arr.join(",")}`})
         }
-        status=status.trim().toLowerCase()
-        if(status=='canceled'){
+        
+        if(status=='cancelled'){
             const order = await orderModel.findOneAndUpdate({_id:orderId,cancellable:true,status:"pending"},{status},{new:"true"})
             if(!order){
-                return res.status(400).send({status:false, message:"order is non cancellable or order is either completed or canceled"})
+                return res.status(400).send({status:false, message:"order is non cancellable or order is either completed or cancelled"})
             }
             if(order.userId!=userId){
                 return res.status(400).send({status:false, message:"can't update other user's order"})
@@ -124,7 +131,7 @@ const updateOrder = async function(req,res){
         else {
             const order = await orderModel.findOneAndUpdate({_id:orderId,status:"pending"},{status},{new:"true"})
             if(!order){
-                return res.status(400).send({status:false, message:"no order found or order is either completed or canceled"})
+                return res.status(400).send({status:false, message:"no order found or order is either completed or cancelled"})
             }
             if(order.userId!=userId){
                 return res.status(400).send({status:false, message:"can't update other user's order"})

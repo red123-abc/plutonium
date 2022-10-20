@@ -20,7 +20,7 @@ const newUser = async function(req,res){
             return res.status(400).send({status:false, message:`value of ${key} must be present `}) 
         }
     }
-
+    
     // validating fname
     if(!validator.isLetters(fname)){
         return res.status(400).send({status:false, message:"fname can only contain letters"})

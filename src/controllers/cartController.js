@@ -6,7 +6,7 @@ const {redis,validator,aws}=require("../utils")
 const createCart = async function(req,res){
     try{
 
-        const userId = req.params.userId
+        const userId = (req.params.userId)
 
         if(!validator.isValidObjectId(userId)){
             return res.status(400).send({status:false, message:"Invalid userId"})
@@ -24,7 +24,8 @@ const createCart = async function(req,res){
         }
         let {cartId,productId}=req.body
 
-        
+        productId=productId.trim()
+        cartId=cartId.trim()
         if(!productId){
             return res.status(400).send({status:false, message:"productId is mandatory"})
         }
@@ -108,7 +109,9 @@ const updateCart = async function(req,res){
         }
 
         const {cartId,productId,removeProduct}=req.body
-
+        cartId=cartId.trim()
+        productId= productId.trim()
+        
         const mandField =["cartId","productId","removeProduct"]
         for(let key of mandField){
             if(!validator.isValid(req.body[key])){
