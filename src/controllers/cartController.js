@@ -235,7 +235,6 @@ const deleteCart = async function(req,res){
         if(!cart){
             return res.status(404).send({status:false, message:"no cart found"})
         }
-        // console.log(cart)
         return res.status(204).send()
 
     }

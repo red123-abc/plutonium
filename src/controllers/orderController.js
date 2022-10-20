@@ -24,29 +24,36 @@ const createOrder = async function(req,res){
         if(!cartId){
             return res.status(400).send({status:false, message:"cartId is mandatory"})
         }
-        // if(cancellable){
-        //     if(!((" "+cancellable).trim()=="true" || (" "+cancellable).trim()=="false" )){
-        //         return res.status(400).send({status:false, message:"Cancellable can only be boolean value"})
-        //     }
+       
+        if(cancellable){
+            if(!((" "+cancellable).trim()=="true" || (" "+cancellable).trim()=="false" )){
+                return res.status(400).send({status:false, message:"Cancellable can only be boolean value"})
+            }
             
-        // }
-        // if(status){
-        //     let arr=["pending", "completed", "canceled"]
-        //     for(let key of arr){
-        //         if(!arr.includes(status)){
-        //             return res.status(400).send({status:false,message:`status value can be only - ${arr.join(",")}`})
-        //         }
-        //     }
-        //     if(status=="canceled" && (" "+cancellable).trim()=="false"){
+        }
 
-        //     }
+        // const cart = await cartModel.findById(cartId).lean()
+        // if(!cart){
+        //     return res.status(400).send({status:false, message:"cart not found/no product is added in cart"})
+        // }
+        // if(cart.items.length==0){
+        //     return res.status(400).send({status:false, message:"can't place order bcoz no product is added in cart"})
+        // }
+        // if(cart.userId!=userId){
+        //     return rea.status(403).send({status:false, message:"unauthorized"})
         // }
 
+        // let totalQuantity=0
+        // cart.items.forEach(x=>totalQuantity+=x.quantity)
+        // // console.log(totalQuantity)
+        // cart.totalQuantity=totalQuantity
+        // // console.log(cart)
+        // const newCart = await cartModel.findByIdAndUpdate(cartId,{$set:{items:[],totalItems:0,totalPrice:0}})
         const cart = await cartModel.findOneAndUpdate({_id:cartId,totalPrice:{$ne:0}},{$set:{items:[],totalItems:0,totalPrice:0}}).lean()
         if(!cart){
             return res.status(400).send({status:false, message:"cart not found/no product is added in cart"})
         }
-        if(cart.items.length=0){
+        if(cart.items.length==0){
             return res.status(400).send({status:false, message:"can't place order bcoz no product is added in cart"})
         }
         if(cart.userId!=userId){
@@ -55,8 +62,13 @@ const createOrder = async function(req,res){
 
         let totalQuantity=0
         cart.items.forEach(x=>totalQuantity+=x.quantity)
-
+     
         cart.totalQuantity=totalQuantity
+
+        if(cancellable+""){
+            cart.cancellable=cancellable
+        }
+            
         const newOrder = await orderModel.create(cart)
         return res.status(201).send({status:true, message:"Success", data:newOrder})
 
@@ -100,19 +112,19 @@ const updateOrder = async function(req,res){
         }
         status=status.trim().toLowerCase()
         if(status=='canceled'){
-            const order = await orderModel.findOneAndUpdate({_id:orderId,cancellable:true,status:{$ne:"completed"}},{status},{new:"true"})
+            const order = await orderModel.findOneAndUpdate({_id:orderId,cancellable:true,status:"pending"},{status},{new:"true"})
             if(!order){
-                return res.status(400).send({status:false, message:"order is non cancellable or order is already completed"})
+                return res.status(400).send({status:false, message:"order is non cancellable or order is either completed or canceled"})
             }
             if(order.userId!=userId){
                 return res.status(400).send({status:false, message:"can't update other user's order"})
             } 
             return res.status(200).send({status:true, message:"Success", data:order})
         }
-        else{
-            const order = await orderModel.findOneAndUpdate({_id:orderId,status:{$ne:"completed"}},{status},{new:"true"})
+        else {
+            const order = await orderModel.findOneAndUpdate({_id:orderId,status:"pending"},{status},{new:"true"})
             if(!order){
-                return res.status(400).send({status:false, message:"no order found or order is already completed"})
+                return res.status(400).send({status:false, message:"no order found or order is either completed or canceled"})
             }
             if(order.userId!=userId){
                 return res.status(400).send({status:false, message:"can't update other user's order"})
