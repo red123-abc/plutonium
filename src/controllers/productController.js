@@ -107,10 +107,6 @@ const updateProduct = async function(req,res){
             return res.status(400).send({status:false, message:"Invalid productId"})
         }
 
-        // const findProduct = await productModel.findOne({_id:productId, isDeleted:false})
-        // if(!findProduct){
-        //     return res.status(404).send({status:false, message:"Product not found"})
-        // }
         if(!(Object.keys(req.body).length!=0 || req.files)){
             return res.status(400).send({status:false, message:"pls provide product details for updation"}) 
         }
@@ -136,7 +132,6 @@ const updateProduct = async function(req,res){
             filter.description = description
         }
         if(price){
-    
             if(isNaN(price)){
                 return res.status(400).send({status:false, message:"Price should be type number"})
             }
@@ -147,14 +142,12 @@ const updateProduct = async function(req,res){
             if(currencyId!=currId){
                 return res.status(400).send({status:false, message:"only Indian currencyId is valid"})
             }
-            
         }
         if(currencyFormat){
             let currFormat = "₹"
             if(currencyFormat!=currFormat){
                 return res.status(400).send({status:false, message:"only Indian currencyFormat is valid"})
             }
-            
         }
         if(isFreeShipping){
            
@@ -197,7 +190,6 @@ const updateProduct = async function(req,res){
             filter.productImage = url
         }
         
-
         const updatedProduct = await productModel.findOneAndUpdate({_id:productId,isDeleted:false},filter,{new : true})
         if(!updatedProduct){
             return res.status(404).send({status:false, message:"Product not found"})

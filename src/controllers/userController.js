@@ -44,7 +44,7 @@ const newUser = async function(req,res){
 
     // validating password
     if(!validator.isValidPassword(password)){
-        return res.status(400).send({status:false, message:"password length must be in between 8-15 / password must contain uppercase,lowercase,number and special charactor "}) 
+        return res.status(400).send({status:false, message:"password length must be in between 8-15 / password must contain uppercase,lowercase,number and special character "}) 
 
     }
 
@@ -231,7 +231,7 @@ const updateUser = async function(req,res){
         // validating password
         if(password){
             if(!validator.isValidPassword(password)){
-                return res.status(400).send({status:false, message:"password must contain uppercase,lowercase,number and special charactor "}) 
+                return res.status(400).send({status:false, message:"password must contain uppercase,lowercase,number and special character "}) 
             }
          
             const encryptPass = bcrypt.hash(password,10,function(err,result){
