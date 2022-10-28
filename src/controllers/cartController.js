@@ -24,8 +24,8 @@ const createCart = async function(req,res){
         }
         let {cartId,productId}=req.body
 
-        productId=productId.trim()
-        cartId=cartId.trim()
+        productId=productId
+        cartId=cartId
         if(!productId){
             return res.status(400).send({status:false, message:"productId is mandatory"})
         }
@@ -33,11 +33,11 @@ const createCart = async function(req,res){
             return res.status(400).send({status:false, message:"Invalid productId"})
         }
 
-        const product = await productModel.findOne({_id:productId,isDeleted:false}).lean().select({title:1,price:1,productImage:1})
+        var product = await productModel.findOne({_id:productId,isDeleted:false}).lean().select({title:1,price:1,productImage:1})
         if(!product){
             return res.status(400).send({status:false, message:"No product found"})
         }
-        const cart = await cartModel.findOne({userId}).lean()
+        var cart = await cartModel.findOne({userId}).lean()
         if(cart){
             if(!cartId){
                 return res.status(400).send({status:false, message:"cartId is mandatory"})
@@ -108,9 +108,9 @@ const updateCart = async function(req,res){
             return res.status(400).send({status:false, message:"no user found"})
         }
 
-        const {cartId,productId,removeProduct}=req.body
-        cartId=cartId.trim()
-        productId= productId.trim()
+        var {cartId,productId,removeProduct}=req.body
+        cartId=cartId
+        productId= productId
         
         const mandField =["cartId","productId","removeProduct"]
         for(let key of mandField){

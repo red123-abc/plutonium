@@ -20,7 +20,7 @@ const createOrder = async function(req,res){
         if(!validator.isValidObject(req.body)){
             return res.status(400).send({status:false, message:"pls provide cart details"})
         }
-        const {cartId,cancellable,status}=req.body
+        var {cartId,cancellable,status}=req.body
         cartId=cartId.trim()
         
         if(!cartId){
