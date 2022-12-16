@@ -8,15 +8,14 @@
     "start": "nodemon src/index.js"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SushantBhaiswar/Assignment.git"
+    "type": "git"
   },
   "author": "Sushant Bhaiswar",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SushantBhaiswar/Assignment/issues"
+
   },
-  "homepage": "https://github.com/SushantBhaiswar/Assignment#readme",
+
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
